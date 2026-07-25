@@ -1,0 +1,4 @@
+# Qu’est-ce que Sini ?  
+Sini est une application mobile légère qui fonctionne sur les smartphones. Elle a pour but de faciliter le suivi, la production et la gestion des récoltes pour les paysans. Elle prédit la météo d’un endroit précis, affiche le prix actuel des récoltes sur le marché voisin, identifie la maladie d’une plante à travers sa photo des le début de la maladie, un journal pour connaitre son évolution et ses failles sur les récoltes précédant, des alertes SMS gratuites même sans internet en Bambara ou en Français.  
+# Pourquoi sini ?   
+Sini parce qu’elle est la seul qui regroupe toutes les fonctionnalités qu’un paysan a besoin pour pouvoir faire de très bonnes récoltes et revenus.   
