@@ -1,4 +1,78 @@
-# Qu’est-ce que Sini ?  
-Sini est une application mobile légère qui fonctionne sur les smartphones. Elle a pour but de faciliter le suivi, la production et la gestion des récoltes pour les paysans. Elle prédit la météo d’un endroit précis, affiche le prix actuel des récoltes sur le marché voisin, identifie la maladie d’une plante à travers sa photo des le début de la maladie et recommandé un traitement, un journal pour connaitre son évolution et ses failles sur les saisons de culture précédant, des alertes SMS gratuites même sans internet en Bambara ou en Français.  
-# Pourquoi sini ?   
-Sini parce qu’elle est la seul qui regroupe toutes les fonctionnalités qu’un paysan a besoin pour pouvoir faire de très bonnes récoltes et revenus.   
+# Sini
+
+Sini est une application mobile destinée à accompagner les agriculteurs dans le suivi de leurs cultures. Elle vise à fournir des informations utiles pour améliorer les récoltes, limiter les pertes et aider à prendre de meilleures décisions agricoles.
+
+## Pourquoi ?
+
+Les agriculteurs rencontrent plusieurs difficultés dans la gestion de leurs cultures : accès limité aux informations météorologiques, détection tardive des maladies des plantes, manque de visibilité sur les prix des marchés et difficulté à suivre l'évolution de leurs productions.
+
+Sini a pour objectif de regrouper ces services dans une seule application accessible et adaptée aux réalités des agriculteurs, notamment dans les zones où l'accès à Internet peut être limité.
+
+## Comment ça marche ?
+
+Sini est conçue autour de plusieurs fonctionnalités principales :
+
+* consultation des prévisions météorologiques selon la localisation de l'utilisateur ;
+* suivi des prix des récoltes sur les marchés voisins ;
+* identification des maladies des plantes à partir d'une image ;
+* recommandation de traitements adaptés ;
+* journal de suivi des cultures pour analyser les saisons précédentes ;
+* envoi d'alertes SMS en français ou en bambara, même sans connexion Internet.
+
+L'architecture du projet est composée d'un backend développé avec FastAPI, d'un frontend React et d'un espace dédié aux futurs modèles de Machine Learning.
+
+## Structure du projet
+
+```text
+sini/
+├── README.md
+├── docs/
+│   ├── vision.md
+│   ├── architecture.md
+│   └── roadmap.md
+├── backend/
+│   ├── pyproject.toml
+│   ├── src/sini/
+│   │   └── main.py
+│   └── tests/
+├── frontend/
+│   ├── package.json
+│   ├── src/
+│   │   └── App.tsx
+│   └── tests/
+├── ml/
+│   └── README.md
+├── ops/
+│   ├── docker-compose.yml
+│   └── deploy/
+└── .github/
+    └── workflows/
+```
+
+## État actuel du projet
+
+Le projet est actuellement en phase de développement initial.
+
+Les fonctionnalités principales sont en cours de conception et les premières bases techniques du backend et du frontend sont mises en place.
+
+## Documentation
+
+La documentation du projet est disponible dans le dossier `docs/` :
+
+* `vision.md` : présentation de la vision et des objectifs du projet ;
+* `architecture.md` : description de l'architecture technique ;
+* `roadmap.md` : étapes prévues pour le développement.
+
+## Tests
+
+Les tests seront progressivement ajoutés au fur et à mesure de l'avancement du projet.
+
+## Contribution
+
+Les contributions et suggestions sont les bienvenues.
+
+Avant toute modification importante, il est recommandé de consulter la documentation du projet afin de respecter l'architecture et les objectifs définis.
+
+## Licence
+
+Licence à définir.
