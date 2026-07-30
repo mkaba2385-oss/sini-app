@@ -1,0 +1,29 @@
+from enum import Enum
+from datetime import datetime 
+from pydantic import BaseModel, ConfigDict, Field
+
+class ActionType(str, Enum):
+    SEMIS = "Semis"
+    IRRIGATION = "Irrigation"
+    FERTILISATION = "Fertilisation"
+    TRAITEMENT = "Traitement phytosanitaire"
+    DESHERBAGE = "Désherbage"
+    RECOLTE = "Récolte"
+    OBSERVATION = "Observation"
+
+class JournalEntryBase(BaseModel):
+    parcelle_id: int 
+    action_type: ActionType
+    title: str = Field(..., min_length=3, max_length=150, examples=["Apport d'engrais NPK"])
+    description: str | None = Field(default=None, max_length=1000)
+    cout_fcfa: float = Field(default=0.0, ge=0.0, description="Coût associé en FCFA")
+
+class JournalEntryCreate(JournalEntryBase):
+    pass
+
+class JournalEntryResponse(JournalEntryBase):
+    id: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
