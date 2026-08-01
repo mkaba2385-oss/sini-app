@@ -20,7 +20,7 @@ class RegionMali(str, Enum):
 @lru_cache(maxsize=1)
 def _get_mali_phone_pattern() -> re.Pattern[str]:
    """Compile et met en cache la regex pour validation rapide du téléphone malien."""
-   return re.Compile(r"^\+223[256789]\d{7}$") 
+   return re.compile(r"^\+223[256789]\d{7}$") 
 
 class UserBase(BaseModel):
     full_name: str =Field(..., min_length=2, max_length=100, examples=["Kabine Kaba"])

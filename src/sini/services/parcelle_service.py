@@ -31,7 +31,7 @@ class ParcelleService:
             updated_at=None,
             **data.model_dump(), 
         )
-        self.storage[parcelle_id] = parcelle
+        self._storage[parcelle_id] = parcelle
         self._counter += 1
         return parcelle 
 
