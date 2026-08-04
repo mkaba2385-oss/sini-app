@@ -4,6 +4,11 @@ from datetime import datetime
 from functools import lru_cache
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+class UserRole(str, Enum):
+    FARMER = "FARMER"
+    AGRONOMIST = "AGRONOMIST"
+    ADMIN = "ADMIN"
+
 class RegionMali(str, Enum):
     BAMAKO = "Bamako"
     KAYES = "Kayes"
