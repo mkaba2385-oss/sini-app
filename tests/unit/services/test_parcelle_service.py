@@ -3,6 +3,8 @@ from sini.schemas.parcelle import ParcelleCreate, ParcelleResponse
 from sini.schemas.user import RegionMali
 from sini.services.exceptions import EntityNotFoundError
 from sini.services.parcelle_service import ParcelleService
+from sini.schemas.parcelle import ParcelleUpdate, RegionMali
+from sini.services.exceptions import EntityNotFoundError
 
 
 @pytest.fixture
@@ -116,3 +118,19 @@ def test_delete_parcelle_success(service: ParcelleService) -> None:
 
     with pytest.raises(EntityNotFoundError):
         service.get_by_id(created.id)
+
+
+# --- Tests des cas d'erreur (EntityNotFoundError) ---
+
+
+def test_update_parcelle_not_found_raises_exception():
+    service = ParcelleService()
+    update_dto = ParcelleUpdate(name="Nouveau nom")
+    with pytest.raises(EntityNotFoundError):
+        service.updated_parcelle(999, update_dto)
+
+
+def test_delete_parcelle_not_found_raises_exception():
+    service = ParcelleService()
+    with pytest.raises(EntityNotFoundError):
+        service.delete_parcelle(999)
