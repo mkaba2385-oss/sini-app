@@ -1,16 +1,27 @@
 import pytest
-from sini.schemas.parcelle import ParcelleCreate, ParcelleResponse
-from sini.schemas.user import RegionMali
+
+from sini.repositories.memory import InMemoryParcelleRepository
+from sini.schemas.parcelle import (
+    CultureType,
+    ParcelleCreate,
+    ParcelleResponse,
+    ParcelleUpdate,
+    RegionMali,
+)
 from sini.services.exceptions import EntityNotFoundError
 from sini.services.parcelle_service import ParcelleService
-from sini.schemas.parcelle import ParcelleUpdate, RegionMali
-from sini.services.exceptions import EntityNotFoundError
+from sini.services.sms import ConsoleSmsGateway
+from sini.services.weather import MockWeatherProvider
 
 
 @pytest.fixture
 def service() -> ParcelleService:
-    """Fixture fournissant une instance fraîche du service pour chaque test."""
-    return ParcelleService()
+    """Fixture fournissant une instance fraîche du service avec ses dépendances pour chaque test."""
+    return ParcelleService(
+        repository=InMemoryParcelleRepository(),
+        weather_provider=MockWeatherProvider(),
+        sms_gateway=ConsoleSmsGateway(),
+    )
 
 
 def test_create_parcelle_success(service: ParcelleService) -> None:
@@ -18,8 +29,9 @@ def test_create_parcelle_success(service: ParcelleService) -> None:
     payload = ParcelleCreate(
         name="Champ Nord",
         superficie_ha=2.5,
-        culture="Maïs",
+        culture=CultureType.MAIS,
         region=RegionMali.SIKASSO,
+        commune="Sikasso",
         owner_id=1,
     )
 
@@ -36,13 +48,13 @@ def test_get_parcelle_by_id_success(service: ParcelleService) -> None:
     payload = ParcelleCreate(
         name="Champ Sud",
         superficie_ha=1.8,
-        culture="Coton",
+        culture=CultureType.COTON,
         region=RegionMali.SIKASSO,
+        commune="Sikasso",
         owner_id=1,
     )
     created = service.create_parcelle(payload)
 
-    # Récupération de la parcelle
     retrieved = service.get_by_id(created.id)
 
     assert retrieved.id == created.id
@@ -60,45 +72,44 @@ def test_list_parcelles(service: ParcelleService) -> None:
     p1 = ParcelleCreate(
         name="P1",
         superficie_ha=1.0,
-        culture="Riz",
+        culture=CultureType.RIZ,
         region=RegionMali.SEGOU,
+        commune="Pelengana",
         owner_id=1,
     )
     p2 = ParcelleCreate(
         name="P2",
         superficie_ha=2.0,
-        culture="Mil",
+        culture=CultureType.MIL,
         region=RegionMali.MOPTI,
+        commune="Mopti",
         owner_id=1,
     )
 
     service.create_parcelle(p1)
     service.create_parcelle(p2)
 
-    # Utilisation de filter_parcelles() au lieu de list_parcelles()
     parcelles = service.filter_parcelles()
 
     assert len(parcelles) >= 2
+
 
 def test_update_parcelle_success(service: ParcelleService) -> None:
     payload = ParcelleCreate(
         name="Champ Test",
         superficie_ha=1.0,
-        culture="Riz",
+        culture=CultureType.RIZ,
         region=RegionMali.SEGOU,
+        commune="Pelengana",
         owner_id=1,
     )
     created = service.create_parcelle(payload)
 
-    # Utilisation de updated_parcelle() au lieu de update_parcelle()
     updated = service.updated_parcelle(
         created.id,
-        ParcelleCreate(
+        ParcelleUpdate(
             name="Champ Modifié",
             superficie_ha=2.0,
-            culture="Riz",
-            region=RegionMali.SEGOU,
-            owner_id=1,
         ),
     )
     assert updated.name == "Champ Modifié"
@@ -108,8 +119,9 @@ def test_delete_parcelle_success(service: ParcelleService) -> None:
     payload = ParcelleCreate(
         name="À Supprimer",
         superficie_ha=1.0,
-        culture="Maïs",
+        culture=CultureType.MAIS,
         region=RegionMali.SIKASSO,
+        commune="Sikasso",
         owner_id=1,
     )
     created = service.create_parcelle(payload)
@@ -123,14 +135,12 @@ def test_delete_parcelle_success(service: ParcelleService) -> None:
 # --- Tests des cas d'erreur (EntityNotFoundError) ---
 
 
-def test_update_parcelle_not_found_raises_exception():
-    service = ParcelleService()
+def test_update_parcelle_not_found_raises_exception(service: ParcelleService) -> None:
     update_dto = ParcelleUpdate(name="Nouveau nom")
     with pytest.raises(EntityNotFoundError):
         service.updated_parcelle(999, update_dto)
 
 
-def test_delete_parcelle_not_found_raises_exception():
-    service = ParcelleService()
+def test_delete_parcelle_not_found_raises_exception(service: ParcelleService) -> None:
     with pytest.raises(EntityNotFoundError):
         service.delete_parcelle(999)
