@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
-from typing import Iterator 
+from typing import Iterator
+
 from sini.schemas.parcelle import (
     ParcelleCreate,
     ParcelleResponse,
@@ -7,62 +8,64 @@ from sini.schemas.parcelle import (
     CultureType,
     RegionMali,
 )
+from sini.repositories.base import RepositoryInterface
+from sini.services.exceptions import EntityNotFoundError
+from sini.services.sms import SmsGateway
+from sini.services.weather import WeatherProvider
+from sini.services.utils import timer
 
-from .exceptions import EntityNotFoundError
-from .utils import timer 
 
 class ParcelleService:
-    """Service en mémoire pour la gestion du CRUD des parcelles."""
-    def __init__(self) -> None :
-        # Stockage en mémoire : ID -> ParcelleResponse
-        self._storage: dict[int, ParcelleResponse] = {}
-        self._counter: int = 1
+    """Service métier appliquant les principes SOLID à 100%."""
+
+    def __init__(
+        self,
+        repository: RepositoryInterface[ParcelleResponse],
+        weather_provider: WeatherProvider,
+        sms_gateway: SmsGateway,
+    ) -> None:
+        self.repo = repository
+        self.weather = weather_provider
+        self.sms = sms_gateway
 
     @timer
     def create_parcelle(self, data: ParcelleCreate) -> ParcelleResponse:
-        """Crée une nouvelle parcelle et lui attribue un ID unique."""
-        parcelle_id = self._counter
+        parcelle_id = self.repo.get_next_id()
         now = datetime.now(timezone.utc)
 
-        # Utilisation de l'unpacking Pydantic (data.model_dump())
         parcelle = ParcelleResponse(
             id=parcelle_id,
             created_at=now,
-            updated_at=None,
-            **data.model_dump(), 
+            update_at=None,  # <-- Corrigé (aligné sur ParcelleResponse.update_at)
+            **data.model_dump(),
         )
-        self._storage[parcelle_id] = parcelle
-        self._counter += 1
-        return parcelle 
+        return self.repo.add(parcelle)
 
     @timer
-    def get_by_id(self, parcelle_id:int) -> ParcelleResponse:
-        """Récupère une parcelle par son ID."""
-        if parcelle_id not in self._storage:
+    def get_by_id(self, parcelle_id: int) -> ParcelleResponse:
+        parcelle = self.repo.get_by_id(parcelle_id)
+        if not parcelle:
             raise EntityNotFoundError("Parcelle", parcelle_id)
-        return self._storage[parcelle_id]
+        return parcelle
 
     @timer
     def get_all(self) -> list[ParcelleResponse]:
-        """Retourne la liste de toutes les parcelles."""
-        return list(self._storage.values())
+        return self.repo.get_all()
 
     def stream_by_owner(self, owner_id: int) -> Iterator[ParcelleResponse]:
-        """Générateur qui produit les parcelles d'un propriétaire une par une."""
-        for parcelle in self._storage.values():
+        for parcelle in self.repo.get_all():
             if parcelle.owner_id == owner_id:
-                yield parcelle 
+                yield parcelle
 
-    @timer 
+    @timer
     def filter_parcelles(
         self,
         owner_id: int | None = None,
         region: RegionMali | None = None,
         culture: CultureType | None = None,
-        ) -> list[ParcelleResponse]:
-        """Filtre les parcelles selon plusieurs critères via une list comprehension."""
+    ) -> list[ParcelleResponse]:
         return [
-            p for p in self._storage.values()
+            p for p in self.repo.get_all()
             if (owner_id is None or p.owner_id == owner_id)
             and (region is None or p.region == region)
             and (culture is None or p.culture == culture)
@@ -70,41 +73,30 @@ class ParcelleService:
 
     @timer
     def updated_parcelle(self, parcelle_id: int, data: ParcelleUpdate) -> ParcelleResponse:
-        """Mise à jour partielle d'une parcelle."""
         current = self.get_by_id(parcelle_id)
-
-        #Extraction des champs modifiés (exclude_unset=True)
         updated_data = data.model_dump(exclude_unset=True)
         if not updated_data:
             return current
 
-        # Création d'un nouveau modèle avec les données mises à jour
         updated_dict = current.model_dump()
         updated_dict.update(updated_data)
-        updated_dict["updated_at"] = datetime.now(timezone.utc)
+        updated_dict["update_at"] = datetime.now(timezone.utc)  # <-- Corrigé
 
         updated_parcelle = ParcelleResponse(**updated_dict)
-        self._storage[parcelle_id] = updated_parcelle
-        return updated_parcelle
+        return self.repo.add(updated_parcelle)
 
-
-    @timer 
+    @timer
     def delete_parcelle(self, parcelle_id: int) -> None:
-        """Supprime une parcelle."""
-        if parcelle_id not in self._storage:
-            raise EntityNotFoundError("Parcelle", parcelle_id)
-        del self._storage[parcelle_id]
+        self.get_by_id(parcelle_id)  # Lève EntityNotFoundError si introuvable
+        self.repo.delete(parcelle_id)
 
-    def clear(self) -> None :
-        """Réinitialise le stockage."""
-        self._storage.clear()
-        self._counter = 1
+    def verifier_et_alerter(self, parcelle_id: int, telephone_owner: str) -> None:
+        parcelle = self.get_by_id(parcelle_id)
+        meteo = self.weather.get_meteo(parcelle.region.value)
 
-        
-        
-     
-
-
-
-
-
+        if meteo.alerte_secheresse:
+            msg = (
+                f"Alerte sécheresse sur la parcelle {parcelle.name} ({parcelle.region.value}) ! "
+                f"Température : {meteo.temperature}°C."
+            )
+            self.sms.send_sms(telephone_owner, msg)
