@@ -14,11 +14,11 @@ class CultureType(str, Enum):
     AUTRE = "Autre"
 
 class ParcelleBase(BaseModel):
-    name:str = Field(..., min_length=2, max_length=100, examples=["Champ Ségou Nord"])
+    name: str = Field(..., min_length=2, max_length=100, examples=["Champ Ségou Nord"])
     superficie_ha: float = Field(..., gt=0, description="Superficie en hectares (ex: 2.5)")
     culture: CultureType = Field(..., examples=[CultureType.MAIS])
     region: RegionMali = Field(..., examples=[RegionMali.SEGOU])
-    commune: str | None = Field(default= None, max_length=100, examples=["Pelengana"])
+    commune: str | None = Field(default=None, max_length=100, examples=["Pelengana"])
 
 class ParcelleCreate(ParcelleBase):
     owner_id: int 
@@ -33,8 +33,7 @@ class ParcelleUpdate(BaseModel):
 class ParcelleResponse(ParcelleBase):
     id: int 
     owner_id: int 
-    created_at : datetime
-    update_at: datetime | None = None
+    created_at: datetime
+    updated_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes= True)
-    
+    model_config = ConfigDict(from_attributes=True)
