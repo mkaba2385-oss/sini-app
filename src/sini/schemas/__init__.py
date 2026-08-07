@@ -1,5 +1,6 @@
-from .user import(
+from .user import (
     RegionMali,
+    UserRole,
     UserBase,
     UserCreate,
     UserUpdate,
@@ -29,30 +30,30 @@ from .diagnostic import (
 )
 
 __all__ = [
-    #user
-    RegionMali,
-    UserBase,
-    UserCreate,
-    UserUpdate,
-    UserResponse,
+    # User
+    "RegionMali",
+    "UserRole",
+    "UserBase",
+    "UserCreate",
+    "UserUpdate",
+    "UserResponse",
 
-    # parcelle
-    CultureType,
-    ParcelleBase,
-    ParcelleCreate,
-    ParcelleUpdate,
-    ParcelleResponse,
+    # Parcelle
+    "CultureType",
+    "ParcelleBase",
+    "ParcelleCreate",
+    "ParcelleUpdate",
+    "ParcelleResponse",
     
-    #journal
-    ActionType,
-    JournalEntryBase,
-    JournalEntryCreate,
-    JournalEntryResponse,
+    # Journal
+    "ActionType",
+    "JournalEntryBase",
+    "JournalEntryCreate",
+    "JournalEntryResponse",
 
-    # diagnostic
-    SeverityLevel,
-    DiagnosticBase,
-    DiagnosticCreate,
-    DiagnosticResponse,
-
+    # Diagnostic
+    "SeverityLevel",
+    "DiagnosticBase",
+    "DiagnosticCreate",
+    "DiagnosticResponse",
 ]
