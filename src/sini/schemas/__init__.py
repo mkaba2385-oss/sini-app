@@ -19,14 +19,25 @@ from .journal import (
     ActionType,
     JournalEntryBase,
     JournalEntryCreate,
+    JournalEntryUpdate,
     JournalEntryResponse,
 )
 
 from .diagnostic import (
     SeverityLevel,
+    PredictionItem,
     DiagnosticBase,
     DiagnosticCreate,
+    DiagnosticUpdate,
     DiagnosticResponse,
+)
+
+from .prix import (
+    UnitePrix,
+    PrixBase,
+    PrixCreate,
+    PrixUpdate,
+    PrixResponse,
 )
 
 __all__ = [
@@ -49,11 +60,21 @@ __all__ = [
     "ActionType",
     "JournalEntryBase",
     "JournalEntryCreate",
+    "JournalEntryUpdate",
     "JournalEntryResponse",
 
     # Diagnostic
     "SeverityLevel",
+    "PredictionItem",
     "DiagnosticBase",
     "DiagnosticCreate",
+    "DiagnosticUpdate",
     "DiagnosticResponse",
+
+    # Prix
+    "UnitePrix",
+    "PrixBase",
+    "PrixCreate",
+    "PrixUpdate",
+    "PrixResponse",
 ]
