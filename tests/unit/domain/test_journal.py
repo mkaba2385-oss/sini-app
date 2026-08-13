@@ -15,7 +15,7 @@ def test_journal_entry_creation_and_summary() -> None:
     )
 
     assert entry.cout_fcfa == 15000.0
-    assert entry.summary() == "[01/08/2026] Engrais: Sachets NPK (15000.0 FCFA)"
+    assert entry.to_summary() == "[01/08/2026] Engrais: Sachets NPK (15000.0 FCFA)"
 
 
 def test_journal_entry_negative_cost_raises_error() -> None:
