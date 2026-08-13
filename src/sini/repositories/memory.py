@@ -1,6 +1,6 @@
-from typing import Iterator
 from sini.repositories.base import RepositoryInterface
 from sini.schemas.parcelle import ParcelleResponse
+
 
 class InMemoryParcelleRepository(RepositoryInterface[ParcelleResponse]):
     def __init__(self) -> None:

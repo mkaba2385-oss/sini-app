@@ -1,32 +1,35 @@
 from datetime import datetime, timezone
 from typing import Iterator
 
+from sini.observers.base import Event, EventPublisher
+from sini.repositories.base import RepositoryInterface
 from sini.schemas.parcelle import (
+    CultureType,
     ParcelleCreate,
     ParcelleResponse,
     ParcelleUpdate,
-    CultureType,
-    RegionMali,
 )
-from sini.repositories.base import RepositoryInterface
+from sini.schemas.user import RegionMali
 from sini.services.exceptions import EntityNotFoundError
-from sini.services.sms import SmsGateway
-from sini.services.weather import WeatherProvider
 from sini.services.utils import timer
+from sini.services.weather import WeatherProvider
+from sini.strategies.alert_strategy import AlertStrategy, DroughtAlertStrategy
 
 
 class ParcelleService:
-    """Service métier appliquant les principes SOLID à 100%."""
+    """Service métier appliquant les principes SOLID, Strategy et Observer."""
 
     def __init__(
         self,
         repository: RepositoryInterface[ParcelleResponse],
         weather_provider: WeatherProvider,
-        sms_gateway: SmsGateway,
+        publisher: EventPublisher,
+        alert_strategy: AlertStrategy | None = None,
     ) -> None:
         self.repo = repository
         self.weather = weather_provider
-        self.sms = sms_gateway
+        self.publisher = publisher
+        self.alert_strategy = alert_strategy or DroughtAlertStrategy()
 
     @timer
     def create_parcelle(self, data: ParcelleCreate) -> ParcelleResponse:
@@ -36,10 +39,14 @@ class ParcelleService:
         parcelle = ParcelleResponse(
             id=parcelle_id,
             created_at=now,
-            update_at=None,  # <-- Corrigé (aligné sur ParcelleResponse.update_at)
+            updated_at=None,
             **data.model_dump(),
         )
-        return self.repo.add(parcelle)
+        created = self.repo.add(parcelle)
+        self.publisher.notify(
+            Event(name="PARCELLE_CREATED", payload={"parcelle": created})
+        )
+        return created
 
     @timer
     def get_by_id(self, parcelle_id: int) -> ParcelleResponse:
@@ -65,14 +72,17 @@ class ParcelleService:
         culture: CultureType | None = None,
     ) -> list[ParcelleResponse]:
         return [
-            p for p in self.repo.get_all()
+            p
+            for p in self.repo.get_all()
             if (owner_id is None or p.owner_id == owner_id)
             and (region is None or p.region == region)
             and (culture is None or p.culture == culture)
         ]
 
     @timer
-    def updated_parcelle(self, parcelle_id: int, data: ParcelleUpdate) -> ParcelleResponse:
+    def updated_parcelle(
+        self, parcelle_id: int, data: ParcelleUpdate
+    ) -> ParcelleResponse:
         current = self.get_by_id(parcelle_id)
         updated_data = data.model_dump(exclude_unset=True)
         if not updated_data:
@@ -80,23 +90,34 @@ class ParcelleService:
 
         updated_dict = current.model_dump()
         updated_dict.update(updated_data)
-        updated_dict["update_at"] = datetime.now(timezone.utc)  # <-- Corrigé
+        updated_dict["updated_at"] = datetime.now(timezone.utc)
 
         updated_parcelle = ParcelleResponse(**updated_dict)
         return self.repo.add(updated_parcelle)
 
     @timer
     def delete_parcelle(self, parcelle_id: int) -> None:
-        self.get_by_id(parcelle_id)  # Lève EntityNotFoundError si introuvable
+        self.get_by_id(parcelle_id)
         self.repo.delete(parcelle_id)
 
     def verifier_et_alerter(self, parcelle_id: int, telephone_owner: str) -> None:
         parcelle = self.get_by_id(parcelle_id)
-        meteo = self.weather.get_meteo(parcelle.region.value)
+        region_val = (
+            parcelle.region.value
+            if hasattr(parcelle.region, "value")
+            else str(parcelle.region)
+        )
+        meteo = self.weather.get_meteo(region_val)
 
-        if meteo.alerte_secheresse:
-            msg = (
-                f"Alerte sécheresse sur la parcelle {parcelle.name} ({parcelle.region.value}) ! "
-                f"Température : {meteo.temperature}°C."
+        if self.alert_strategy.should_alert(parcelle, meteo):
+            msg = self.alert_strategy.build_message(parcelle, meteo)
+            self.publisher.notify(
+                Event(
+                    name="ALERT_TRIGGERED",
+                    payload={
+                        "telephone": telephone_owner,
+                        "message": msg,
+                        "parcelle": parcelle,
+                    },
+                )
             )
-            self.sms.send_sms(telephone_owner, msg)

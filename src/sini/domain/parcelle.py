@@ -1,8 +1,10 @@
 from datetime import datetime, timezone
 from typing import List, Optional
-from sini.domain.user import User
+
 from sini.domain.journal import JournalEntry
-from sini.schemas.parcelle import ParcelleCreate, ParcelleResponse, RegionMali
+from sini.domain.user import User
+from sini.schemas.parcelle import CultureType, ParcelleCreate, ParcelleResponse
+from sini.schemas.user import RegionMali
 
 
 class Parcelle:
@@ -15,7 +17,7 @@ class Parcelle:
         superficie_ha: float,
         culture: str,
         region: RegionMali,
-        owner: User,  # Composition : Une Parcelle A UN User (propriétaire)
+        owner: User,  
         created_at: Optional[datetime] = None,
     ) -> None:
         self.id = parcelle_id
@@ -25,7 +27,7 @@ class Parcelle:
         self.region = region
         self.owner = owner
         self.created_at = created_at or datetime.now(timezone.utc)
-        self.journal_entries: List[JournalEntry] = []  # Composition : journal_entries
+        self.journal_entries: List[JournalEntry] = []  
 
     @property
     def superficie_ha(self) -> float:
@@ -51,7 +53,9 @@ class Parcelle:
     # --- Conversions Pont avec Pydantic ---
 
     @classmethod
-    def from_schema(cls, parcelle_id: int, dto: ParcelleCreate, owner: User) -> "Parcelle":
+    def from_schema(
+        cls, parcelle_id: int, dto: ParcelleCreate, owner: User
+    ) -> "Parcelle":
         """Instancie un objet POO Parcelle à partir du DTO Pydantic."""
         return cls(
             parcelle_id=parcelle_id,
@@ -64,15 +68,22 @@ class Parcelle:
 
     def to_schema(self) -> ParcelleResponse:
         """Convertit l'objet POO Domaine vers le DTO Pydantic de réponse."""
+        culture_enum = (
+            CultureType(self.culture)
+            if isinstance(self.culture, str)
+            else self.culture
+        )
         return ParcelleResponse(
             id=self.id,
             name=self.name,
             superficie_ha=self.superficie_ha,
-            culture=self.culture,
+            culture=culture_enum,
             region=self.region,
             owner_id=self.owner.id,
             created_at=self.created_at,
         )
 
     def __repr__(self) -> str:
-        return f"<Parcelle id={self.id} name='{self.name}' owner='{self.owner.full_name}'>"
+        return (
+            f"<Parcelle id={self.id} name='{self.name}' owner='{self.owner.full_name}'>"
+        )

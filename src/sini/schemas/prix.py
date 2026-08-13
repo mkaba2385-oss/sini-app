@@ -1,6 +1,8 @@
-from enum import Enum
 from datetime import date, datetime
+from enum import Enum
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 from .parcelle import CultureType
 
 
@@ -14,7 +16,9 @@ class UnitePrix(str, Enum):
 class PrixBase(BaseModel):
     culture: CultureType = Field(..., examples=[CultureType.MAIS])
     marche: str = Field(..., min_length=2, max_length=100, examples=["Marché de Ségou"])
-    prix_moyen: float = Field(..., gt=0, description="Prix moyen en FCFA (doit être > 0)", examples=[250.0])
+    prix_moyen: float = Field(
+        ..., gt=0, description="Prix moyen en FCFA (doit être > 0)", examples=[250.0]
+    )
     unite: UnitePrix = Field(default=UnitePrix.KG, examples=[UnitePrix.KG])
     date_releve: date = Field(..., examples=["2026-08-01"])
 
@@ -22,7 +26,9 @@ class PrixBase(BaseModel):
     @classmethod
     def validate_date_not_future(cls, v: date) -> date:
         if v > date.today():
-            raise ValueError("La date de relevé du prix ne peut pas être dans le futur.")
+            raise ValueError(
+                "La date de relevé du prix ne peut pas être dans le futur."
+            )
         return v
 
 
@@ -41,7 +47,9 @@ class PrixUpdate(BaseModel):
     @classmethod
     def validate_date_not_future(cls, v: date | None) -> date | None:
         if v is not None and v > date.today():
-            raise ValueError("La date de relevé du prix ne peut pas être dans le futur.")
+            raise ValueError(
+                "La date de relevé du prix ne peut pas être dans le futur."
+            )
         return v
 
 

@@ -1,5 +1,6 @@
+from datetime import datetime
 from enum import Enum
-from datetime import datetime 
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -14,9 +15,11 @@ class ActionType(str, Enum):
 
 
 class JournalEntryBase(BaseModel):
-    parcelle_id: int 
+    parcelle_id: int
     action_type: ActionType
-    title: str = Field(..., min_length=3, max_length=150, examples=["Apport d'engrais NPK"])
+    title: str = Field(
+        ..., min_length=3, max_length=150, examples=["Apport d'engrais NPK"]
+    )
     description: str | None = Field(default=None, max_length=1000)
     cout_fcfa: float = Field(default=0.0, ge=0.0, description="Coût associé en FCFA")
 

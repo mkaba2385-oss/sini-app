@@ -1,13 +1,16 @@
-from enum import Enum
-import re 
+import re
 from datetime import datetime
+from enum import Enum
 from functools import lru_cache
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 
 class UserRole(str, Enum):
     FARMER = "FARMER"
     AGRONOMIST = "AGRONOMIST"
     ADMIN = "ADMIN"
+
 
 class RegionMali(str, Enum):
     BAMAKO = "Bamako"
@@ -22,10 +25,12 @@ class RegionMali(str, Enum):
     MENAKA = "Ménaka"
     TAOUDENIT = "Taoudénit"
 
+
 @lru_cache(maxsize=1)
 def _get_mali_phone_pattern() -> re.Pattern[str]:
     """Compile et met en cache la regex pour validation rapide du téléphone malien."""
-    return re.compile(r"^\+223[256789]\d{7}$") 
+    return re.compile(r"^\+223[256789]\d{7}$")
+
 
 class UserBase(BaseModel):
     full_name: str = Field(..., min_length=2, max_length=100, examples=["Kabine Kaba"])
@@ -40,13 +45,17 @@ class UserBase(BaseModel):
         cleaned = "".join(v.split())
         pattern = _get_mali_phone_pattern()
         if not pattern.match(cleaned):
-            raise ValueError(
-                f"Le numéro '{v}' est invalide. Format attendu : +223XXXXXXXX (8 chiffres)."
+            msg = (
+                f"Le numéro '{v}' est invalide. "
+                "Format attendu : +223XXXXXXXX (8 chiffres)."
             )
+            raise ValueError(msg)
         return cleaned
+
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, description="Mot de passe sécurisé")
+
 
 class UserUpdate(BaseModel):
     full_name: str | None = Field(default=None, min_length=2, max_length=100)
@@ -61,8 +70,9 @@ class UserUpdate(BaseModel):
             return None
         return UserBase.validate_malian_phone(v)
 
+
 class UserResponse(UserBase):
     id: int
     created_at: datetime
-    
+
     model_config = ConfigDict(from_attributes=True)
