@@ -17,7 +17,7 @@ class Parcelle:
         superficie_ha: float,
         culture: str,
         region: RegionMali,
-        owner: User,  
+        owner: User,
         created_at: Optional[datetime] = None,
     ) -> None:
         self.id = parcelle_id
@@ -27,7 +27,7 @@ class Parcelle:
         self.region = region
         self.owner = owner
         self.created_at = created_at or datetime.now(timezone.utc)
-        self.journal_entries: List[JournalEntry] = []  
+        self.journal_entries: List[JournalEntry] = []
 
     @property
     def superficie_ha(self) -> float:
@@ -69,9 +69,7 @@ class Parcelle:
     def to_schema(self) -> ParcelleResponse:
         """Convertit l'objet POO Domaine vers le DTO Pydantic de réponse."""
         culture_enum = (
-            CultureType(self.culture)
-            if isinstance(self.culture, str)
-            else self.culture
+            CultureType(self.culture) if isinstance(self.culture, str) else self.culture
         )
         return ParcelleResponse(
             id=self.id,
