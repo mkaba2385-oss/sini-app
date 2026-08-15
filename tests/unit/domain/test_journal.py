@@ -1,7 +1,8 @@
-import pytest
 from datetime import date
+
+import pytest
+
 from sini.domain.journal import JournalEntry
-from datetime import datetime, timezone
 
 
 def test_journal_entry_creation_and_summary() -> None:
@@ -22,10 +23,11 @@ def test_journal_entry_negative_cost_raises_error() -> None:
     entry = JournalEntry(1, 10, "Achat", "Pesticide", cout_fcfa=5000.0)
 
     # Passer un coût négatif doit lever un ValueError
-    with pytest.raises(ValueError, match="Le coût d'une activité ne peut pas être négatif."):
+    with pytest.raises(
+        ValueError, match="Le coût d'une activité ne peut pas être négatif."
+    ):
         entry.cout_fcfa = -1000.0
 
-from datetime import date
 
 def test_journal_entry_repr():
     entry = JournalEntry(
