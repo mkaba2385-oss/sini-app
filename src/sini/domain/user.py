@@ -1,7 +1,6 @@
 from typing import Optional
 
-from sini.schemas.user import RegionMali
-from sini.schemas.user import UserRole
+from sini.schemas.user import RegionMali, UserRole
 
 
 class User:
