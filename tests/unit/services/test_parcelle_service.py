@@ -1,4 +1,5 @@
 import pytest
+
 from sini.factories.service_factory import ServiceFactory
 from sini.observers.base import Event, Observer
 from sini.schemas.parcelle import (
@@ -140,7 +141,7 @@ def test_update_and_delete_not_found(service: ParcelleService) -> None:
 
 
 def test_verifier_et_alerter_observer_and_strategy(service: ParcelleService) -> None:
-    """Teste le déclenchement de l'alerte météo via la stratégie et la notification via Observer."""
+    """Teste l'alerte météo et la notification via Observer."""
     created = service.create_parcelle(
         ParcelleCreate(
             name="Champ Alerte",
@@ -160,21 +161,19 @@ def test_verifier_et_alerter_observer_and_strategy(service: ParcelleService) -> 
     mock_obs = MockObserver()
     service.publisher.attach(mock_obs)
 
-    
     service.verifier_et_alerter(created.id, "+22370000000")
 
     assert len(events_received) == 1
     assert events_received[0].name == "ALERT_TRIGGERED"
     assert events_received[0].payload["telephone"] == "+22370000000"
 
-    
     service.publisher.detach(mock_obs)
     service.verifier_et_alerter(created.id, "+22370000000")
     assert len(events_received) == 1
 
 
 def test_custom_strategy_no_alert(service: ParcelleService) -> None:
-    """Vérifie qu'aucune alerte n'est émise si la stratégie ne déclenche pas d'alerte."""
+    """Vérifie qu'aucune alerte n'est émise."""
     service.alert_strategy = HighTemperatureAlertStrategy(temp_threshold=50.0)
     created = service.create_parcelle(
         ParcelleCreate(
