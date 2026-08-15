@@ -54,7 +54,7 @@ def main() -> None:
     print("--- 4. Test du workflow Météo + SMS ---")
     service.verifier_et_alerter(
         parcelle_id=parcelle.id,
-        telephone_owner="+22370000000"  # Format Mali
+        telephone_owner="+22370000000",  # Format Mali
     )
     print()
 
