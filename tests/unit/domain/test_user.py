@@ -1,7 +1,8 @@
 import pytest
+
 from sini.domain.user import User
-from sini.schemas.user import UserRole
 from sini.schemas.parcelle import RegionMali
+from sini.schemas.user import UserRole
 
 
 def test_user_creation_and_properties() -> None:
@@ -34,6 +35,7 @@ def test_user_deactivation() -> None:
     user.deactivate()
 
     assert user.is_active is False
+
 
 def test_user_repr():
     user = User(
