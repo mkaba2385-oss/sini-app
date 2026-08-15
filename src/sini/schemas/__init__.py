@@ -20,6 +20,13 @@ from .parcelle import (
     ParcelleResponse,
     ParcelleUpdate,
 )
+from .photo import (
+    PhotoBase,
+    PhotoCreate,
+    PhotoOut,
+    PhotoResponse,
+    PhotoUpdate,
+)
 from .prix import (
     PrixBase,
     PrixCreate,
@@ -28,22 +35,32 @@ from .prix import (
     UnitePrix,
 )
 from .user import (
+    Language,
     RegionMali,
     UserBase,
     UserCreate,
+    UserOut,
     UserResponse,
     UserRole,
     UserUpdate,
 )
 
 __all__ = [
+    # Photo
+    "PhotoBase",
+    "PhotoCreate",
+    "PhotoUpdate",
+    "PhotoResponse",
+    "PhotoOut",
     # User
     "RegionMali",
+    "Language",
     "UserRole",
     "UserBase",
     "UserCreate",
     "UserUpdate",
     "UserResponse",
+    "UserOut",
     # Parcelle
     "CultureType",
     "ParcelleBase",
