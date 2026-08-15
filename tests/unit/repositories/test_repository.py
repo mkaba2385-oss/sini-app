@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+
 import pytest
 
 from sini.repositories.memory import InMemoryParcelleRepository
@@ -27,7 +28,9 @@ def sample_parcelle() -> ParcelleResponse:
     )
 
 
-def test_add_and_get_by_id(repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse) -> None:
+def test_add_and_get_by_id(
+    repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse
+) -> None:
     repo.add(sample_parcelle)
     retrieved = repo.get_by_id(1)
 
@@ -36,7 +39,9 @@ def test_add_and_get_by_id(repo: InMemoryParcelleRepository, sample_parcelle: Pa
     assert retrieved.name == "Champ Test"
 
 
-def test_get_by_id_returns_none_when_not_found(repo: InMemoryParcelleRepository) -> None:
+def test_get_by_id_returns_none_when_not_found(
+    repo: InMemoryParcelleRepository,
+) -> None:
     assert repo.get_by_id(999) is None
 
 
@@ -48,7 +53,9 @@ def test_get_next_id_increments_counter(repo: InMemoryParcelleRepository) -> Non
     assert id2 == 2
 
 
-def test_get_all(repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse) -> None:
+def test_get_all(
+    repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse
+) -> None:
     repo.add(sample_parcelle)
     all_items = repo.get_all()
 
@@ -56,14 +63,18 @@ def test_get_all(repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResp
     assert all_items[0].id == 1
 
 
-def test_delete(repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse) -> None:
+def test_delete(
+    repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse
+) -> None:
     repo.add(sample_parcelle)
     repo.delete(1)
 
     assert repo.get_by_id(1) is None
 
 
-def test_clear(repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse) -> None:
+def test_clear(
+    repo: InMemoryParcelleRepository, sample_parcelle: ParcelleResponse
+) -> None:
     repo.add(sample_parcelle)
     repo.get_next_id()
     repo.clear()
