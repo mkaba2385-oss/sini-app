@@ -36,9 +36,7 @@ class JournalEntry:
 
     def to_summary(self) -> str:
         """Résumé formaté de l'activité."""
-        cost_info = (
-            f" ({self.cout_fcfa} {self.DEVISE})" if self.cout_fcfa > 0 else ""
-        )
+        cost_info = f" ({self.cout_fcfa} {self.DEVISE})" if self.cout_fcfa > 0 else ""
         date_str = self.entry_date.strftime("%d/%m/%Y")
         return f"[{date_str}] {self.action}: {self.description}{cost_info}"
 
