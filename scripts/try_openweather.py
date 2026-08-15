@@ -1,4 +1,5 @@
 import os
+
 import requests
 
 # Coordonnées par défaut : Bamako, Mali
@@ -10,8 +11,11 @@ def fetch_weather():
     api_key = os.getenv("OPENWEATHER_API_KEY")
 
     if not api_key:
-        print("Erreur : La variable d'environnement OPENWEATHER_API_KEY n'est pas définie.")
-        print("Exemple d'utilisation : OPENWEATHER_API_KEY=votre_cle python scripts/try_openweather.py")
+        print("Erreur : OPENWEATHER_API_KEY n'est pas définie.")
+        print(
+            "Exemple : OPENWEATHER_API_KEY=votre_cle python scripts/try_openweather.py"
+        )
+
         return
 
     url = "https://api.openweathermap.org/data/2.5/weather"
@@ -20,7 +24,7 @@ def fetch_weather():
         "lon": LONGITUDE,
         "appid": api_key,
         "units": "metric",
-        "lang": "fr"
+        "lang": "fr",
     }
 
     try:
