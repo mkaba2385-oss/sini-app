@@ -6,13 +6,18 @@ T = TypeVar("T")
 
 class RepositoryInterface(ABC, Generic[T]):
     @abstractmethod
+    def create(self, entity: T) -> T:
+        """Crée une entité en laissant le repository générer son identifiant."""
+        pass
+
+    @abstractmethod
     def add(self, entity: T) -> T:
-        """Ajoute ou enregistre une entité."""
+        """Ajoute ou met à jour une entité existante."""
         pass
 
     @abstractmethod
     def get_next_id(self) -> int:
-        """Génère le prochain identifiant unique."""
+        """Retourne le prochain identifiant (compatibilité InMemory)."""
         pass
 
     @abstractmethod
