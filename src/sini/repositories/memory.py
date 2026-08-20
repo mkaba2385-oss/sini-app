@@ -1,4 +1,6 @@
-from typing import Generic, Protocol, TypeVar
+from typing import Any, Generic, Protocol, TypeVar, cast
+
+from typing_extensions import Self
 
 from sini.repositories.base import RepositoryInterface
 from sini.schemas.journal import JournalEntryResponse
@@ -11,6 +13,14 @@ class HasId(Protocol):
 
     id: int
 
+    def model_copy(
+        self,
+        *,
+        update: dict[str, Any] | None = None,
+    ) -> Self:
+        """Retourne une copie du modèle avec des valeurs modifiées."""
+        ...
+
 
 T = TypeVar("T", bound=HasId)
 
@@ -21,6 +31,13 @@ class InMemoryRepository(RepositoryInterface[T], Generic[T]):
     def __init__(self) -> None:
         self._storage: dict[int, T] = {}
         self._counter = 1
+
+    def create(self, entity: T) -> T:
+        """Crée une entité avec un identifiant généré en mémoire."""
+        entity_id = self.get_next_id()
+        created = entity.model_copy(update={"id": entity_id})
+        self._storage[entity_id] = created
+        return created
 
     def add(self, entity: T) -> T:
         """Ajoute ou remplace une entité."""
@@ -40,7 +57,7 @@ class InMemoryRepository(RepositoryInterface[T], Generic[T]):
 
     def get_all(self) -> list[T]:
         """Retourne toutes les entités."""
-        return list(self._storage.values())
+        return cast(list[T], list(self._storage.values()))
 
     def delete(self, entity_id: int) -> None:
         """Supprime une entité si elle existe."""
