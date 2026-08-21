@@ -33,16 +33,15 @@ class ParcelleService:
 
     @timer
     def create_parcelle(self, data: ParcelleCreate) -> ParcelleResponse:
-        parcelle_id = self.repo.get_next_id()
         now = datetime.now(timezone.utc)
 
         parcelle = ParcelleResponse(
-            id=parcelle_id,
+            id=0,
             created_at=now,
             updated_at=None,
             **data.model_dump(),
         )
-        created = self.repo.add(parcelle)
+        created = self.repo.create(parcelle)
         self.publisher.notify(
             Event(name="PARCELLE_CREATED", payload={"parcelle": created})
         )
