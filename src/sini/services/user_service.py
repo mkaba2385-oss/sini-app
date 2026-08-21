@@ -16,11 +16,11 @@ class UserService:
         if self.get_by_phone(data.phone_number) is not None:
             raise SiniServiceError("Ce numéro de téléphone est déjà utilisé.")
         user = UserResponse(
-            id=self.repo.get_next_id(),
+            id=0,
             created_at=datetime.now(timezone.utc),
             **data.model_dump(exclude={"password"}),
         )
-        return self.repo.add(user)
+        return self.repo.create(user)
 
     def get_by_phone(self, phone_number: str) -> UserResponse | None:
         """Recherche un utilisateur par son numéro de téléphone."""
