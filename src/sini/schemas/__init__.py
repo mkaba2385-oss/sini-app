@@ -6,6 +6,10 @@ from .diagnostic import (
     PredictionItem,
     SeverityLevel,
 )
+from .harvest import (
+    HarvestCreate,
+    HarvestResponse,
+)
 from .journal import (
     ActionType,
     JournalEntryBase,
@@ -34,6 +38,7 @@ from .prix import (
     PrixUpdate,
     UnitePrix,
 )
+from .season import SeasonCreate, SeasonResponse
 from .user import (
     Language,
     RegionMali,
@@ -86,4 +91,10 @@ __all__ = [
     "PrixCreate",
     "PrixUpdate",
     "PrixResponse",
+    # harvest
+    "HarvestCreate",
+    "HarvestResponse",
+    # season
+    "SeasonCreate",
+    "SeasonResponse",
 ]
