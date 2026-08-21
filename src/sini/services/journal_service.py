@@ -19,11 +19,11 @@ class JournalService:
     def add_entry(self, data: JournalEntryCreate) -> JournalEntryResponse:
         """Ajoute une entrée au journal."""
         entry = JournalEntryResponse(
-            id=self.repo.get_next_id(),
+            id=0,
             created_at=datetime.now(timezone.utc),
             **data.model_dump(),
         )
-        return self.repo.add(entry)
+        return self.repo.create(entry)
 
     def list_by_parcelle(self, parcelle_id: int) -> list[JournalEntryResponse]:
         """Retourne les entrées associées à une parcelle."""
