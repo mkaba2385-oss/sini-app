@@ -20,6 +20,23 @@ class SeasonCreate(SeasonBase):
     pass
 
 
+class SeasonUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=100)
+    year: int | None = Field(default=None, ge=2000)
+    start_date: date | None = None
+    end_date: date | None = None
+
+    @model_validator(mode="after")
+    def validate_dates(self) -> "SeasonUpdate":
+        if (
+            self.start_date is not None
+            and self.end_date is not None
+            and self.end_date < self.start_date
+        ):
+            raise ValueError("La date de fin doit être postérieure à la date de début.")
+        return self
+
+
 class SeasonResponse(SeasonBase):
     id: int
 

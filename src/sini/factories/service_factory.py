@@ -2,12 +2,19 @@ from sqlalchemy.orm import Session
 
 from sini.observers.base import EventPublisher
 from sini.observers.sms_observer import SmsNotificationObserver
-from sini.repositories.base import RepositoryInterface
-from sini.repositories.memory import InMemoryParcelleRepository
-from sini.repositories.sqlalchemy import SqlAlchemyParcelleRepository
+from sini.repositories.base import RepositoryInterface, UserRepositoryInterface
+from sini.repositories.memory import (
+    InMemoryParcelleRepository,
+    InMemoryUserRepository,
+)
+from sini.repositories.sqlalchemy import (
+    SqlAlchemyParcelleRepository,
+    SqlAlchemyUserRepository,
+)
 from sini.schemas.parcelle import ParcelleResponse
 from sini.services.parcelle_service import ParcelleService
 from sini.services.sms import ConsoleSmsGateway
+from sini.services.user_service import UserService
 from sini.services.weather import MockWeatherProvider
 from sini.strategies.alert_strategy import DroughtAlertStrategy
 
@@ -51,3 +58,24 @@ class ServiceFactory:
             publisher=publisher,
             alert_strategy=DroughtAlertStrategy(),
         )
+
+    @staticmethod
+    def create_user_service(
+        env: str = "dev", session: Session | None = None
+    ) -> UserService:
+        """Crée un UserService avec le repository adapté à l'environnement."""
+        repo: UserRepositoryInterface
+
+        if env == "dev":
+            repo = InMemoryUserRepository()
+        elif env == "prod":
+            if session is None:
+                raise ValueError(
+                    "Une session SQLAlchemy doit être fournie pour "
+                    "l'environnement prod."
+                )
+            repo = SqlAlchemyUserRepository(session)
+        else:
+            raise ValueError(f"Environnement inconnu : {env!r}")
+
+        return UserService(repository=repo)

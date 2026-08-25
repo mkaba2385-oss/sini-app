@@ -42,6 +42,16 @@ class JournalService:
         )
         return self.repo.add(updated)
 
+    def delete(self, entry_id: int) -> None:
+        """Supprime une entrée du journal."""
+
+        current = self.repo.get_by_id(entry_id)
+
+        if current is None:
+            raise EntityNotFoundError("Entrée de journal", entry_id)
+
+        self.repo.delete(entry_id)
+
     def stats(self, parcelle_id: int) -> dict[str, Any]:
         """Calcule des statistiques simples sur le journal d'une parcelle."""
         entries = self.list_by_parcelle(parcelle_id)

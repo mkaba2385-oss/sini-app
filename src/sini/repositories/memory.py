@@ -2,7 +2,7 @@ from typing import Any, Generic, Protocol, TypeVar, cast
 
 from typing_extensions import Self
 
-from sini.repositories.base import RepositoryInterface
+from sini.repositories.base import RepositoryInterface, UserRepositoryInterface
 from sini.schemas.journal import JournalEntryResponse
 from sini.schemas.parcelle import ParcelleResponse
 from sini.schemas.user import UserResponse
@@ -73,8 +73,18 @@ class InMemoryParcelleRepository(InMemoryRepository[ParcelleResponse]):
     """Repository en mémoire dédié aux parcelles."""
 
 
-class InMemoryUserRepository(InMemoryRepository[UserResponse]):
+class InMemoryUserRepository(
+    InMemoryRepository[UserResponse],
+    UserRepositoryInterface,
+):
     """Repository en mémoire dédié aux utilisateurs."""
+
+    def get_by_phone(self, phone_number: str) -> UserResponse | None:
+        """Recherche un utilisateur par son numéro de téléphone."""
+        for user in self._storage.values():
+            if user.phone_number == phone_number:
+                return user
+        return None
 
 
 class InMemoryJournalRepository(InMemoryRepository[JournalEntryResponse]):

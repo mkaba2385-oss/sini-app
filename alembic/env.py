@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from sini.db.base import Base
+from sini.db.config import DATABASE_URL
 from sini.models import (  # noqa: F401
     DiagnosticModel,
     HarvestModel,
@@ -24,10 +24,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-database_url = os.getenv("DATABASE_URL")
-
-if database_url and not config.get_main_option("sqlalchemy.url"):
-    config.set_main_option("sqlalchemy.url", database_url)
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 
 target_metadata = Base.metadata

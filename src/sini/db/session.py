@@ -18,9 +18,15 @@ SessionLocal = sessionmaker(
 
 
 def get_session() -> Generator[Session, None, None]:
-    """Fournit une session SQLAlchemy et la ferme après utilisation."""
+    """Fournit une session SQLAlchemy et gère la transaction."""
+
     session = SessionLocal()
+
     try:
         yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
     finally:
         session.close()

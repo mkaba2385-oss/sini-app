@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sini.repositories.base import RepositoryInterface
+from sini.repositories.base import UserRepositoryInterface
 from sini.schemas.user import UserCreate, UserResponse, UserUpdate
 from sini.services.exceptions import EntityNotFoundError, SiniServiceError
 
@@ -8,7 +8,7 @@ from sini.services.exceptions import EntityNotFoundError, SiniServiceError
 class UserService:
     """Service métier de gestion des utilisateurs."""
 
-    def __init__(self, repository: RepositoryInterface[UserResponse]) -> None:
+    def __init__(self, repository: UserRepositoryInterface) -> None:
         self.repo = repository
 
     def create(self, data: UserCreate) -> UserResponse:
@@ -24,10 +24,7 @@ class UserService:
 
     def get_by_phone(self, phone_number: str) -> UserResponse | None:
         """Recherche un utilisateur par son numéro de téléphone."""
-        for user in self.repo.get_all():
-            if user.phone_number == phone_number:
-                return user
-        return None
+        return self.repo.get_by_phone(phone_number)
 
     def get_by_id(self, user_id: int) -> UserResponse:
         """Récupère un utilisateur par son identifiant."""

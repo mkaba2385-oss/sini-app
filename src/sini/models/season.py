@@ -27,5 +27,5 @@ class SeasonModel(Base):
 
     harvests: Mapped[list[HarvestModel]] = relationship(
         back_populates="season",
-        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
