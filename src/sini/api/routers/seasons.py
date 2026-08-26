@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from sini.api.dependencies import CurrentAdminDep, CurrentUserDep
 from sini.db.session import get_session
 from sini.repositories.sqlalchemy import SqlAlchemySeasonRepository
 from sini.schemas.season import SeasonCreate, SeasonResponse, SeasonUpdate
@@ -46,6 +47,7 @@ SeasonServiceDep = Annotated[
 def create_season(
     data: SeasonCreate,
     service: SeasonServiceDep,
+    current_admin: CurrentAdminDep,
 ) -> SeasonResponse:
     """Crée une nouvelle saison."""
 
@@ -58,6 +60,7 @@ def create_season(
 )
 def get_all_seasons(
     service: SeasonServiceDep,
+    current_user: CurrentUserDep,
 ) -> list[SeasonResponse]:
     """Récupère toutes les saisons."""
 
@@ -71,6 +74,7 @@ def get_all_seasons(
 def get_season(
     season_id: int,
     service: SeasonServiceDep,
+    current_user: CurrentUserDep,
 ) -> SeasonResponse:
     """Récupère une saison par son ID."""
 
@@ -91,6 +95,7 @@ def update_season(
     season_id: int,
     data: SeasonUpdate,
     service: SeasonServiceDep,
+    current_admin: CurrentAdminDep,
 ) -> SeasonResponse:
     """Met à jour une saison."""
 
@@ -110,6 +115,7 @@ def update_season(
 def delete_season(
     season_id: int,
     service: SeasonServiceDep,
+    current_admin: CurrentAdminDep,
 ) -> Response:
     """Supprime une saison."""
 

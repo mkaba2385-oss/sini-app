@@ -29,11 +29,20 @@ class JournalEntryCreate(JournalEntryBase):
 
 
 class JournalEntryUpdate(BaseModel):
-    parcelle_id: int | None = None
     action_type: ActionType | None = None
-    title: str | None = Field(default=None, min_length=3, max_length=150)
-    description: str | None = Field(default=None, max_length=1000)
-    cout_fcfa: float | None = Field(default=None, ge=0.0)
+    title: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=150,
+    )
+    description: str | None = Field(
+        default=None,
+        max_length=1000,
+    )
+    cout_fcfa: float | None = Field(
+        default=None,
+        ge=0.0,
+    )
 
 
 class JournalEntryResponse(JournalEntryBase):

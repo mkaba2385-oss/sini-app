@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
+from sini.api.dependencies import CurrentAdminDep, CurrentUserDep
 from sini.db.session import get_session
 from sini.repositories.sqlalchemy import SqlAlchemyPrixRepository
 from sini.schemas.prix import PrixCreate, PrixResponse, PrixUpdate
@@ -45,6 +46,7 @@ PrixServiceDep = Annotated[
 def create_prix(
     data: PrixCreate,
     service: PrixServiceDep,
+    current_admin: CurrentAdminDep,
 ) -> PrixResponse:
     """Crée un nouveau relevé de prix."""
 
@@ -63,6 +65,7 @@ def create_prix(
 )
 def get_all_prix(
     service: PrixServiceDep,
+    current_user: CurrentUserDep,
 ) -> list[PrixResponse]:
     """Récupère tous les relevés de prix."""
 
@@ -76,6 +79,7 @@ def get_all_prix(
 def get_prix(
     prix_id: int,
     service: PrixServiceDep,
+    current_user: CurrentUserDep,
 ) -> PrixResponse:
     """Récupère un relevé de prix par son ID."""
 
@@ -96,6 +100,7 @@ def update_prix(
     prix_id: int,
     data: PrixUpdate,
     service: PrixServiceDep,
+    current_admin: CurrentAdminDep,
 ) -> PrixResponse:
     """Met à jour un relevé de prix."""
 
@@ -115,6 +120,7 @@ def update_prix(
 def delete_prix(
     prix_id: int,
     service: PrixServiceDep,
+    current_admin: CurrentAdminDep,
 ) -> Response:
     """Supprime un relevé de prix."""
 

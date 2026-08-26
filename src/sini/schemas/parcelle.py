@@ -28,7 +28,7 @@ class ParcelleBase(BaseModel):
 
 
 class ParcelleCreate(ParcelleBase):
-    owner_id: int
+    pass
 
 
 class ParcelleUpdate(BaseModel):

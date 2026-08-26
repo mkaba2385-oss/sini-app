@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.8
+    rev: v0.16.0
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -12,7 +12,10 @@ repos:
         pass_filenames: false
         args: ["src"]
         additional_dependencies:
-          - pydantic==2.13.4
+          - fastapi>=0.115
+          - SQLAlchemy>=2.0,<3.0
+          - PyJWT>=2.8,<3.0
+          - pydantic>=2.5
 
   - repo: local
     hooks:

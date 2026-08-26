@@ -44,12 +44,19 @@ class DiagnosticCreate(DiagnosticBase):
 
 
 class DiagnosticUpdate(BaseModel):
-    parcelle_id: int | None = None
-    symptomes_observes: str | None = Field(default=None, min_length=5, max_length=1000)
+    symptomes_observes: str | None = Field(
+        default=None,
+        min_length=5,
+        max_length=1000,
+    )
     pathologie_detectee: str | None = None
     niveau_severite: SeverityLevel | None = None
     recommandations: str | None = None
-    score_confiance: float | None = Field(default=None, ge=0.0, le=1.0)
+    score_confiance: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+    )
     predictions: list[PredictionItem] | dict[str, float] | None = None
 
 

@@ -17,6 +17,7 @@ def db_session() -> Generator[Session, None, None]:
     Base.metadata.create_all(engine)
     factory = sessionmaker(bind=engine, class_=Session, expire_on_commit=False)
     session = factory()
+
     try:
         yield session
     finally:
@@ -26,6 +27,7 @@ def db_session() -> Generator[Session, None, None]:
 
 def test_factory_dev_uses_inmemory() -> None:
     service = ServiceFactory.create_parcelle_service(env="dev")
+
     assert service.repo.__class__.__name__ == "InMemoryParcelleRepository"
 
 
@@ -35,7 +37,10 @@ def test_factory_prod_requires_session() -> None:
 
 
 def test_factory_prod_uses_sqlalchemy(db_session: Session) -> None:
-    service = ServiceFactory.create_parcelle_service(env="prod", session=db_session)
+    service = ServiceFactory.create_parcelle_service(
+        env="prod",
+        session=db_session,
+    )
 
     assert isinstance(service, ParcelleService)
     assert isinstance(service.repo, SqlAlchemyParcelleRepository)
@@ -46,8 +51,8 @@ def test_factory_prod_uses_sqlalchemy(db_session: Session) -> None:
             superficie_ha=2.5,
             culture=CultureType.MAIS,
             region=RegionMali.SEGOU,
-            owner_id=1,
-        )
+        ),
+        owner_id=1,
     )
 
     assert created.id == 1

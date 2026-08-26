@@ -10,7 +10,7 @@ from sini.schemas.parcelle import (
     ParcelleUpdate,
 )
 from sini.schemas.user import RegionMali
-from sini.services.exceptions import EntityNotFoundError
+from sini.services.exceptions import EntityNotFoundError, PermissionDeniedError
 from sini.services.utils import timer
 from sini.services.weather import WeatherProvider
 from sini.strategies.alert_strategy import AlertStrategy, DroughtAlertStrategy
@@ -32,19 +32,30 @@ class ParcelleService:
         self.alert_strategy = alert_strategy or DroughtAlertStrategy()
 
     @timer
-    def create_parcelle(self, data: ParcelleCreate) -> ParcelleResponse:
+    def create_parcelle(
+        self,
+        data: ParcelleCreate,
+        owner_id: int,
+    ) -> ParcelleResponse:
         now = datetime.now(timezone.utc)
 
         parcelle = ParcelleResponse(
             id=0,
+            owner_id=owner_id,
             created_at=now,
             updated_at=None,
             **data.model_dump(),
         )
+
         created = self.repo.create(parcelle)
+
         self.publisher.notify(
-            Event(name="PARCELLE_CREATED", payload={"parcelle": created})
+            Event(
+                name="PARCELLE_CREATED",
+                payload={"parcelle": created},
+            )
         )
+
         return created
 
     @timer
@@ -52,6 +63,20 @@ class ParcelleService:
         parcelle = self.repo.get_by_id(parcelle_id)
         if not parcelle:
             raise EntityNotFoundError("Parcelle", parcelle_id)
+        return parcelle
+
+    def get_owned_parcelle(
+        self,
+        parcelle_id: int,
+        user_id: int,
+    ) -> ParcelleResponse:
+        """Récupère une parcelle si elle appartient à l'utilisateur."""
+
+        parcelle = self.get_by_id(parcelle_id)
+
+        if parcelle.owner_id != user_id:
+            raise PermissionDeniedError()
+
         return parcelle
 
     @timer

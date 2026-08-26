@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from sini.api.routers.auth import router as auth_router
 from sini.api.routers.diagnostics import router as diagnostics_router
 from sini.api.routers.harvests import router as harvests_router
 from sini.api.routers.journal import router as journal_router
@@ -23,6 +24,7 @@ app.include_router(photos_router)
 app.include_router(prix_router)
 app.include_router(harvests_router)
 app.include_router(seasons_router)
+app.include_router(auth_router)
 
 
 @app.get("/")

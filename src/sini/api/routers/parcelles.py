@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from sini.api.dependencies import CurrentUserDep
 from sini.db.session import get_session
 from sini.observers.base import EventPublisher
 from sini.observers.sms_observer import SmsNotificationObserver
@@ -14,7 +15,7 @@ from sini.schemas.parcelle import (
     ParcelleUpdate,
 )
 from sini.schemas.user import RegionMali
-from sini.services.exceptions import EntityNotFoundError
+from sini.services.exceptions import EntityNotFoundError, PermissionDeniedError
 from sini.services.parcelle_service import ParcelleService
 from sini.services.sms import ConsoleSmsGateway
 from sini.services.weather import MockWeatherProvider
@@ -66,11 +67,15 @@ ParcelleServiceDep = Annotated[
 def create_parcelle(
     data: ParcelleCreate,
     service: ParcelleServiceDep,
+    current_user: CurrentUserDep,
 ) -> ParcelleResponse:
     """Crée une nouvelle parcelle."""
 
     try:
-        return service.create_parcelle(data)
+        return service.create_parcelle(
+            data,
+            owner_id=current_user.id,
+        )
     except EntityNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -85,14 +90,23 @@ def create_parcelle(
 def get_parcelle(
     parcelle_id: int,
     service: ParcelleServiceDep,
+    current_user: CurrentUserDep,
 ) -> ParcelleResponse:
     """Récupère une parcelle par son ID."""
 
     try:
-        return service.get_by_id(parcelle_id)
+        return service.get_owned_parcelle(
+            parcelle_id,
+            current_user.id,
+        )
     except EntityNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    except PermissionDeniedError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=str(exc),
         ) from exc
 
@@ -103,17 +117,14 @@ def get_parcelle(
 )
 def get_all_parcelles(
     service: ParcelleServiceDep,
-    owner_id: int | None = None,
+    current_user: CurrentUserDep,
     region: RegionMali | None = None,
     culture: CultureType | None = None,
 ) -> list[ParcelleResponse]:
-    """Récupère les parcelles avec filtres optionnels."""
-
-    if owner_id is None and region is None and culture is None:
-        return service.get_all()
+    """Récupère les parcelles de l'utilisateur connecté."""
 
     return service.filter_parcelles(
-        owner_id=owner_id,
+        owner_id=current_user.id,
         region=region,
         culture=culture,
     )
@@ -127,10 +138,16 @@ def update_parcelle(
     parcelle_id: int,
     data: ParcelleUpdate,
     service: ParcelleServiceDep,
+    current_user: CurrentUserDep,
 ) -> ParcelleResponse:
     """Met à jour une parcelle."""
 
     try:
+        service.get_owned_parcelle(
+            parcelle_id,
+            current_user.id,
+        )
+
         return service.updated_parcelle(
             parcelle_id,
             data,
@@ -138,6 +155,11 @@ def update_parcelle(
     except EntityNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    except PermissionDeniedError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=str(exc),
         ) from exc
 
@@ -149,13 +171,25 @@ def update_parcelle(
 def delete_parcelle(
     parcelle_id: int,
     service: ParcelleServiceDep,
+    current_user: CurrentUserDep,
 ) -> None:
     """Supprime une parcelle."""
 
     try:
+        service.get_owned_parcelle(
+            parcelle_id,
+            current_user.id,
+        )
+
         service.delete_parcelle(parcelle_id)
+
     except EntityNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    except PermissionDeniedError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=str(exc),
         ) from exc

@@ -19,9 +19,15 @@ class PhotoCreate(PhotoBase):
 class PhotoUpdate(BaseModel):
     """Champs modifiables d'une photo."""
 
-    parcelle_id: int | None = None
-    url: str | None = Field(default=None, min_length=1, max_length=500)
-    caption: str | None = Field(default=None, max_length=300)
+    url: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=500,
+    )
+    caption: str | None = Field(
+        default=None,
+        max_length=300,
+    )
     taken_at: datetime | None = None
 
 

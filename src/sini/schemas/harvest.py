@@ -16,10 +16,16 @@ class HarvestCreate(HarvestBase):
 
 
 class HarvestUpdate(BaseModel):
-    parcelle_id: int | None = None
     season_id: int | None = None
-    quantite_recoltee: float | None = Field(default=None, gt=0)
-    unite: str | None = Field(default=None, min_length=1, max_length=20)
+    quantite_recoltee: float | None = Field(
+        default=None,
+        gt=0,
+    )
+    unite: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=20,
+    )
     date_recolte: date | None = None
 
 

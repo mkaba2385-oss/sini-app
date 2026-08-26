@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from sini.api.dependencies import CurrentUserDep
 from sini.db.session import get_session
 from sini.factories.service_factory import ServiceFactory
 from sini.schemas.user import UserCreate, UserResponse, UserUpdate
@@ -55,8 +56,16 @@ def create_user(
 def get_user(
     user_id: int,
     service: UserServiceDep,
+    current_user: CurrentUserDep,
 ) -> UserResponse:
     """Récupère un utilisateur par son ID."""
+
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous ne pouvez consulter que votre propre profil.",
+        )
+
     try:
         return service.get_by_id(user_id)
     except EntityNotFoundError as exc:
@@ -74,8 +83,16 @@ def update_user(
     user_id: int,
     data: UserUpdate,
     service: UserServiceDep,
+    current_user: CurrentUserDep,
 ) -> UserResponse:
     """Met à jour un utilisateur."""
+
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous ne pouvez modifier que votre propre profil.",
+        )
+
     try:
         return service.update(user_id, data)
     except EntityNotFoundError as exc:
@@ -97,8 +114,16 @@ def update_user(
 def deactivate_user(
     user_id: int,
     service: UserServiceDep,
+    current_user: CurrentUserDep,
 ) -> UserResponse:
     """Désactive un utilisateur."""
+
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous ne pouvez désactiver que votre propre compte.",
+        )
+
     try:
         return service.deactivate(user_id)
     except EntityNotFoundError as exc:
