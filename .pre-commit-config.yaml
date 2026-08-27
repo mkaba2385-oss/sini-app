@@ -16,6 +16,10 @@ repos:
           - SQLAlchemy>=2.0,<3.0
           - PyJWT>=2.8,<3.0
           - pydantic>=2.5
+          - httpx
+          - pypdf
+          - africastalking
+          - python-dotenv
 
   - repo: local
     hooks:

@@ -1,27 +1,28 @@
 from sqlalchemy.orm import Session
 
-from sini.config import (
-    AFRICASTALKING_API_KEY,
-    AFRICASTALKING_USERNAME,
-    OPENWEATHER_API_KEY,
-)
+from sini.config import OPENWEATHER_API_KEY
 from sini.observers.base import EventPublisher
 from sini.observers.sms_observer import SmsNotificationObserver
-from sini.providers.africa_talking import AfricaTalkingSmsGateway
 from sini.providers.openweather import OpenWeatherMapProvider
-from sini.repositories.base import RepositoryInterface, UserRepositoryInterface
+from sini.repositories.base import (
+    PrixRepositoryInterface,
+    RepositoryInterface,
+    UserRepositoryInterface,
+)
 from sini.repositories.memory import (
     InMemoryParcelleRepository,
     InMemoryUserRepository,
 )
 from sini.repositories.sqlalchemy import (
     SqlAlchemyParcelleRepository,
+    SqlAlchemyPrixRepository,
     SqlAlchemyUserRepository,
 )
 from sini.schemas.parcelle import ParcelleResponse
 from sini.services.auth_service import AuthService
 from sini.services.otp_service import OtpService
 from sini.services.parcelle_service import ParcelleService
+from sini.services.prix_service import PrixService
 from sini.services.sms import ConsoleSmsGateway, SmsGateway
 from sini.services.token_service import TokenService
 from sini.services.user_service import UserService
@@ -35,31 +36,10 @@ class ServiceFactory:
     """Factory dédiée au câblage des services."""
 
     @staticmethod
-    def _create_sms_gateway(env: str) -> SmsGateway:
-        """Crée le gateway SMS adapté à l'environnement."""
+    def _create_sms_gateway() -> SmsGateway:
+        """Crée le gateway SMS utilisé par l'application."""
 
-        if env == "dev":
-            return ConsoleSmsGateway()
-
-        if env == "prod":
-            if AFRICASTALKING_USERNAME is None:
-                raise ValueError(
-                    "AFRICASTALKING_USERNAME doit être définie "
-                    "pour utiliser Africa's Talking en production."
-                )
-
-            if AFRICASTALKING_API_KEY is None:
-                raise ValueError(
-                    "AFRICASTALKING_API_KEY doit être définie "
-                    "pour utiliser Africa's Talking en production."
-                )
-
-            return AfricaTalkingSmsGateway(
-                username=AFRICASTALKING_USERNAME,
-                api_key=AFRICASTALKING_API_KEY,
-            )
-
-        raise ValueError(f"Environnement inconnu : {env!r}")
+        return ConsoleSmsGateway()
 
     @staticmethod
     def create_parcelle_service(
@@ -97,7 +77,7 @@ class ServiceFactory:
         else:
             raise ValueError(f"Environnement inconnu : {env!r}")
 
-        sms = ServiceFactory._create_sms_gateway(env)
+        sms = ServiceFactory._create_sms_gateway()
 
         publisher = EventPublisher()
 
@@ -154,7 +134,7 @@ class ServiceFactory:
             session=session,
         )
 
-        sms_gateway = ServiceFactory._create_sms_gateway(env)
+        sms_gateway = ServiceFactory._create_sms_gateway()
 
         token_service = TokenService()
 
@@ -163,4 +143,16 @@ class ServiceFactory:
             otp_service=otp_service,
             sms_gateway=sms_gateway,
             token_service=token_service,
+        )
+
+    @staticmethod
+    def create_prix_service(
+        session: Session,
+    ) -> PrixService:
+        """Crée le service de gestion des prix."""
+
+        repo: PrixRepositoryInterface = SqlAlchemyPrixRepository(session)
+
+        return PrixService(
+            repository=repo,
         )
