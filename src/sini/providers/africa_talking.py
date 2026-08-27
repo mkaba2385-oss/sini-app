@@ -23,9 +23,9 @@ class AfricaTalkingSmsGateway(SmsGateway):
         telephone: str,
         message: str,
     ) -> bool:
-        response = self.sms.send(
+        self.sms.send(
             message,
             [telephone],
         )
 
-        return bool(response)
+        return True

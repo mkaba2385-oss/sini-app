@@ -12,5 +12,9 @@ class SmsNotificationObserver(Observer):
         if event.name == "ALERT_TRIGGERED":
             telephone = event.payload.get("telephone")
             message = event.payload.get("message")
+
             if isinstance(telephone, str) and isinstance(message, str):
-                self.sms_gateway.send_sms(telephone, message)
+                self.sms_gateway.send_sms(
+                    telephone,
+                    message,
+                )
