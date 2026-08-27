@@ -25,10 +25,10 @@ class TokenService:
         }
 
         return jwt.encode(
-        payload,
-        JWT_SECRET_KEY,
-        algorithm=JWT_ALGORITHM,
-    )
+            payload,
+            JWT_SECRET_KEY,
+            algorithm=JWT_ALGORITHM,
+        )
 
     def create_refresh_token(self, user_id: int) -> str:
         """Crée un refresh token JWT."""
@@ -44,10 +44,10 @@ class TokenService:
         }
 
         return jwt.encode(
-        payload,
-        JWT_SECRET_KEY,
-        algorithm=JWT_ALGORITHM,
-    )
+            payload,
+            JWT_SECRET_KEY,
+            algorithm=JWT_ALGORITHM,
+        )
 
     def verify_token(
         self,

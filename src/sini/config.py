@@ -20,3 +20,15 @@ REFRESH_TOKEN_EXPIRE_DAYS = int(
         "7",
     )
 )
+
+#Openweather
+
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+
+OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
+
+
+#africataling
+AFRICASTALKING_USERNAME = os.getenv("AFRICASTALKING_USERNAME")
+
+AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")

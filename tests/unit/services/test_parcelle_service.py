@@ -1,14 +1,14 @@
 import pytest
 
 from sini.factories.service_factory import ServiceFactory
-from sini.observers.base import Event
+from sini.observers.base import Event, Observer
 from sini.schemas.parcelle import (
     CultureType,
     ParcelleCreate,
     ParcelleResponse,
     ParcelleUpdate,
-    RegionMali,
 )
+from sini.schemas.user import RegionMali
 from sini.services.exceptions import EntityNotFoundError
 from sini.services.parcelle_service import ParcelleService
 from sini.strategies.alert_strategy import HighTemperatureAlertStrategy
@@ -208,7 +208,7 @@ def test_verifier_et_alerter_observer_and_strategy(
 
     events_received: list[Event] = []
 
-    class MockObserver:
+    class MockObserver(Observer):
         def update(self, event: Event) -> None:
             events_received.append(event)
 
@@ -256,7 +256,7 @@ def test_custom_strategy_no_alert(
 
     events_received: list[Event] = []
 
-    class MockObserver:
+    class MockObserver(Observer):
         def update(self, event: Event) -> None:
             events_received.append(event)
 

@@ -1,8 +1,10 @@
+from datetime import datetime, timezone
+
 import pytest
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 
-from sini.api.dependencies import get_current_user
+from sini.api.dependencies import resolve_current_user
 from sini.schemas.user import (
     Language,
     RegionMali,
@@ -52,7 +54,7 @@ def create_user(is_active: bool = True) -> UserResponse:
         role=UserRole.FARMER,
         language=Language.FRENCH,
         is_active=is_active,
-        created_at="2026-08-25T10:00:00",
+        created_at=datetime(2026, 8, 25, 10, 0, 0, tzinfo=timezone.utc),
     )
 
 
@@ -66,7 +68,7 @@ def create_credentials() -> HTTPAuthorizationCredentials:
 def test_get_current_user_returns_active_user() -> None:
     user = create_user()
 
-    result = get_current_user(
+    result = resolve_current_user(
         credentials=create_credentials(),
         token_service=FakeTokenService(user_id=1),
         user_service=FakeUserService(user=user),
@@ -77,7 +79,7 @@ def test_get_current_user_returns_active_user() -> None:
 
 def test_get_current_user_invalid_token_raises_401() -> None:
     with pytest.raises(HTTPException) as exc_info:
-        get_current_user(
+        resolve_current_user(
             credentials=create_credentials(),
             token_service=FakeTokenService(user_id=None),
             user_service=FakeUserService(),
@@ -89,7 +91,7 @@ def test_get_current_user_invalid_token_raises_401() -> None:
 
 def test_get_current_user_refresh_token_raises_401() -> None:
     with pytest.raises(HTTPException) as exc_info:
-        get_current_user(
+        resolve_current_user(
             credentials=create_credentials(),
             token_service=FakeTokenService(user_id=None),
             user_service=FakeUserService(),
@@ -101,7 +103,7 @@ def test_get_current_user_refresh_token_raises_401() -> None:
 
 def test_get_current_user_unknown_user_raises_401() -> None:
     with pytest.raises(HTTPException) as exc_info:
-        get_current_user(
+        resolve_current_user(
             credentials=create_credentials(),
             token_service=FakeTokenService(user_id=999),
             user_service=FakeUserService(should_raise=True),
@@ -115,7 +117,7 @@ def test_get_current_user_inactive_user_raises_403() -> None:
     user = create_user(is_active=False)
 
     with pytest.raises(HTTPException) as exc_info:
-        get_current_user(
+        resolve_current_user(
             credentials=create_credentials(),
             token_service=FakeTokenService(user_id=1),
             user_service=FakeUserService(user=user),

@@ -3,7 +3,8 @@ from datetime import datetime, timezone
 import pytest
 
 from sini.repositories.memory import InMemoryParcelleRepository
-from sini.schemas.parcelle import CultureType, ParcelleResponse, RegionMali
+from sini.schemas.parcelle import CultureType, ParcelleResponse
+from sini.schemas.user import RegionMali
 
 
 @pytest.fixture
@@ -24,7 +25,7 @@ def sample_parcelle() -> ParcelleResponse:
         commune="Pelengana",
         owner_id=10,
         created_at=datetime.now(timezone.utc),
-        update_at=None,
+        updated_at=None,
     )
 
 

@@ -1,4 +1,5 @@
-from sini.schemas.parcelle import CultureType, ParcelleResponse, RegionMali
+from sini.schemas.parcelle import CultureType, ParcelleResponse
+from sini.schemas.user import RegionMali
 from sini.services.weather import MeteoData, WeatherProvider
 from sini.services.weather_alert_service import WeatherAlertService
 from sini.strategies.alert_strategy import (

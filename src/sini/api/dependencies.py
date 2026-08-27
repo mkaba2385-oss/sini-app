@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Protocol
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -11,9 +11,28 @@ from sini.services.exceptions import EntityNotFoundError
 from sini.services.token_service import TokenService
 from sini.services.user_service import UserService
 
+
+class TokenServiceProtocol(Protocol):
+    def verify_token(
+        self,
+        token: str,
+        expected_type: str,
+    ) -> int | None: ...
+
+
+class UserServiceProtocol(Protocol):
+    def get_by_id(
+        self,
+        user_id: int,
+    ) -> UserResponse: ...
+
+
 security = HTTPBearer()
 
-SessionDep = Annotated[Session, Depends(get_session)]
+SessionDep = Annotated[
+    Session,
+    Depends(get_session),
+]
 
 
 def get_token_service() -> TokenService:
@@ -28,7 +47,9 @@ TokenServiceDep = Annotated[
 ]
 
 
-def get_user_service(session: SessionDep) -> UserService:
+def get_user_service(
+    session: SessionDep,
+) -> UserService:
     """Crée le service de gestion des utilisateurs."""
 
     return ServiceFactory.create_user_service(
@@ -43,15 +64,12 @@ UserServiceDep = Annotated[
 ]
 
 
-def get_current_user(
-    credentials: Annotated[
-        HTTPAuthorizationCredentials,
-        Depends(security),
-    ],
-    token_service: TokenServiceDep,
-    user_service: UserServiceDep,
+def resolve_current_user(
+    credentials: HTTPAuthorizationCredentials,
+    token_service: TokenServiceProtocol,
+    user_service: UserServiceProtocol,
 ) -> UserResponse:
-    """Récupère l'utilisateur authentifié à partir du JWT."""
+    """Résout l'utilisateur authentifié."""
 
     user_id = token_service.verify_token(
         credentials.credentials,
@@ -79,6 +97,23 @@ def get_current_user(
         )
 
     return user
+
+
+def get_current_user(
+    credentials: Annotated[
+        HTTPAuthorizationCredentials,
+        Depends(security),
+    ],
+    token_service: TokenServiceDep,
+    user_service: UserServiceDep,
+) -> UserResponse:
+    """Récupère l'utilisateur authentifié à partir du JWT."""
+
+    return resolve_current_user(
+        credentials=credentials,
+        token_service=token_service,
+        user_service=user_service,
+    )
 
 
 CurrentUserDep = Annotated[

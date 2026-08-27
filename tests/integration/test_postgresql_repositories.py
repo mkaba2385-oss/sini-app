@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Generator
 from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pytest
 from alembic.config import Config
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -38,7 +40,7 @@ TEST_DATABASE_URL = os.getenv("SINI_TEST_DATABASE_URL")
 
 
 @pytest.fixture(scope="session")
-def postgres_engine():
+def postgres_engine() -> Generator[Engine, None, None]:
     """Fournit une vraie base PostgreSQL de test dédiée."""
     if not TEST_DATABASE_URL:
         pytest.skip(
@@ -66,7 +68,9 @@ def postgres_engine():
 
 
 @pytest.fixture
-def db_session(postgres_engine):
+def db_session(
+    postgres_engine: Engine,
+) -> Generator[Session, None, None]:
     """Une transaction isolée pour chaque test."""
     with Session(postgres_engine) as session:
         try:

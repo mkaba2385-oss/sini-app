@@ -44,5 +44,4 @@ def test_parcelle_superficie_must_be_positive() -> None:
             superficie_ha=0.0,
             culture=CultureType.MAIS,
             region=RegionMali.SEGOU,
-            owner_id=1,
         )

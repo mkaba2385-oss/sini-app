@@ -29,7 +29,7 @@ def test_journal_entry_negative_cost_raises_error() -> None:
         entry.cout_fcfa = -1000.0
 
 
-def test_journal_entry_repr():
+def test_journal_entry_repr() -> None:
     entry = JournalEntry(
         entry_id=1,
         parcelle_id=10,

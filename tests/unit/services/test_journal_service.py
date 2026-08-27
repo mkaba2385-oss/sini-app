@@ -5,7 +5,8 @@ from sini.repositories.memory import (
     InMemoryParcelleRepository,
 )
 from sini.schemas.journal import ActionType, JournalEntryCreate
-from sini.schemas.parcelle import CultureType, ParcelleResponse, RegionMali
+from sini.schemas.parcelle import CultureType, ParcelleResponse
+from sini.schemas.user import RegionMali
 from sini.services.journal_service import JournalService
 
 

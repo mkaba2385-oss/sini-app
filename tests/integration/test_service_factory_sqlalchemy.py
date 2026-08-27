@@ -4,10 +4,12 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
+import sini.factories.service_factory as service_factory_module
 from sini.db.base import Base
 from sini.factories.service_factory import ServiceFactory
 from sini.repositories.sqlalchemy import SqlAlchemyParcelleRepository
-from sini.schemas.parcelle import CultureType, ParcelleCreate, RegionMali
+from sini.schemas.parcelle import CultureType, ParcelleCreate
+from sini.schemas.user import RegionMali
 from sini.services.parcelle_service import ParcelleService
 
 
@@ -36,7 +38,16 @@ def test_factory_prod_requires_session() -> None:
         ServiceFactory.create_parcelle_service(env="prod")
 
 
-def test_factory_prod_uses_sqlalchemy(db_session: Session) -> None:
+def test_factory_prod_uses_sqlalchemy(
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        service_factory_module,
+        "OPENWEATHER_API_KEY",
+        "fake-api-key",
+    )
+
     service = ServiceFactory.create_parcelle_service(
         env="prod",
         session=db_session,

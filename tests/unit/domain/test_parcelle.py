@@ -3,8 +3,8 @@ import pytest
 from sini.domain.journal import JournalEntry
 from sini.domain.parcelle import Parcelle
 from sini.domain.user import User
-from sini.schemas.parcelle import ParcelleCreate, RegionMali
-from sini.schemas.user import UserRole
+from sini.schemas.parcelle import CultureType, ParcelleCreate
+from sini.schemas.user import RegionMali, UserRole
 
 
 @pytest.fixture
@@ -56,9 +56,8 @@ def test_parcelle_from_and_to_schema(sample_user: User) -> None:
     dto = ParcelleCreate(
         name="Champs Riz",
         superficie_ha=2.5,
-        culture="Riz",
+        culture=CultureType.RIZ,
         region=RegionMali.SEGOU,
-        owner_id=sample_user.id,
     )
 
     # 2. Conversion DTO -> Objet Domaine POO
@@ -73,7 +72,9 @@ def test_parcelle_from_and_to_schema(sample_user: User) -> None:
     assert response_dto.owner_id == sample_user.id
 
 
-def test_parcelle_repr_and_invalid_superficie_setter(sample_user):
+def test_parcelle_repr_and_invalid_superficie_setter(
+    sample_user: User,
+) -> None:
     """Vérifie la méthode __repr__ et l'exception sur le setter de superficie_ha."""
     parcelle = Parcelle(
         parcelle_id=1,
