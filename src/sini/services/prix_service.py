@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
-from sini.repositories.base import RepositoryInterface
+from sini.repositories.base import PrixRepositoryInterface
+from sini.schemas.parcelle import CultureType
 from sini.schemas.prix import (
     PrixCreate,
     PrixResponse,
@@ -14,7 +15,7 @@ class PrixService:
 
     def __init__(
         self,
-        repository: RepositoryInterface[PrixResponse],
+        repository: PrixRepositoryInterface,
     ) -> None:
         self.repo = repository
 
@@ -44,6 +45,22 @@ class PrixService:
         """Retourne tous les relevés de prix."""
 
         return self.repo.get_all()
+
+    def list_by_culture(
+        self,
+        culture: CultureType,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés de prix pour une culture."""
+
+        return self.repo.list_by_culture(culture)
+
+    def list_by_marche(
+        self,
+        marche: str,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés de prix pour un marché."""
+
+        return self.repo.list_by_marche(marche)
 
     def update(
         self,

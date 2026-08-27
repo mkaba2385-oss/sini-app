@@ -15,13 +15,14 @@ from sini.models.prix import PrixModel
 from sini.models.season import SeasonModel
 from sini.models.user import UserModel
 from sini.repositories.base import (
+    PrixRepositoryInterface,
     RepositoryInterface,
     UserRepositoryInterface,
 )
 from sini.schemas.diagnostic import DiagnosticResponse
 from sini.schemas.harvest import HarvestResponse
 from sini.schemas.journal import JournalEntryResponse
-from sini.schemas.parcelle import ParcelleResponse
+from sini.schemas.parcelle import CultureType, ParcelleResponse
 from sini.schemas.photo import PhotoResponse
 from sini.schemas.prix import PrixResponse
 from sini.schemas.season import SeasonResponse
@@ -230,7 +231,7 @@ class SqlAlchemyPhotoRepository(RepositoryInterface[PhotoResponse]):
         self.session.flush()
 
 
-class SqlAlchemyPrixRepository(RepositoryInterface[PrixResponse]):
+class SqlAlchemyPrixRepository(PrixRepositoryInterface):
     """Repository SQLAlchemy pour les relevés de prix."""
 
     def __init__(self, session: Session) -> None:
@@ -240,22 +241,36 @@ class SqlAlchemyPrixRepository(RepositoryInterface[PrixResponse]):
         raise RuntimeError("Les IDs PostgreSQL sont générés par la base via create().")
 
     def create(self, entity: PrixResponse) -> PrixResponse:
+        """Crée un nouveau relevé de prix."""
+
         data = _values(entity)
+
         data.pop("id", None)
         data.pop("created_at", None)
 
         model = PrixModel(**data)
+
         self.session.add(model)
         self.session.flush()
 
         return PrixResponse.model_validate(model)
 
     def get_by_id(self, entity_id: int) -> PrixResponse | None:
-        model = self.session.get(PrixModel, entity_id)
+        """Récupère un prix par son ID."""
 
-        return None if model is None else PrixResponse.model_validate(model)
+        model = self.session.get(
+            PrixModel,
+            entity_id,
+        )
+
+        if model is None:
+            return None
+
+        return PrixResponse.model_validate(model)
 
     def get_all(self) -> list[PrixResponse]:
+        """Récupère tous les relevés de prix."""
+
         stmt = select(PrixModel).order_by(
             PrixModel.date_releve,
             PrixModel.id,
@@ -266,7 +281,13 @@ class SqlAlchemyPrixRepository(RepositoryInterface[PrixResponse]):
         ]
 
     def add(self, entity: PrixResponse) -> PrixResponse:
-        model = self.session.get(PrixModel, entity.id)
+        """Ajoute ou met à jour un relevé."""
+
+        model = self.session.get(
+            PrixModel,
+            entity.id,
+        )
+
         data = _values(entity)
 
         if model is None:
@@ -274,15 +295,85 @@ class SqlAlchemyPrixRepository(RepositoryInterface[PrixResponse]):
             self.session.add(model)
         else:
             for key, value in data.items():
-                setattr(model, key, value)
+                if key != "id":
+                    setattr(model, key, value)
 
         self.session.flush()
 
         return PrixResponse.model_validate(model)
 
     def delete(self, entity_id: int) -> None:
-        self.session.execute(delete(PrixModel).where(PrixModel.id == entity_id))
-        self.session.flush()
+        """Supprime un relevé de prix."""
+
+        model = self.session.get(
+            PrixModel,
+            entity_id,
+        )
+
+        if model is not None:
+            self.session.delete(model)
+            self.session.flush()
+
+    def list_by_culture(
+        self,
+        culture: CultureType,
+    ) -> list[PrixResponse]:
+        """Récupère tous les prix pour une culture."""
+
+        stmt = (
+            select(PrixModel)
+            .where(PrixModel.culture == culture)
+            .order_by(
+                PrixModel.date_releve,
+                PrixModel.id,
+            )
+        )
+
+        return [
+            PrixResponse.model_validate(model) for model in self.session.scalars(stmt)
+        ]
+
+    def list_by_marche(
+        self,
+        marche: str,
+    ) -> list[PrixResponse]:
+        """Récupère tous les prix d'un marché."""
+
+        stmt = (
+            select(PrixModel)
+            .where(PrixModel.marche == marche)
+            .order_by(
+                PrixModel.date_releve,
+                PrixModel.id,
+            )
+        )
+
+        return [
+            PrixResponse.model_validate(model) for model in self.session.scalars(stmt)
+        ]
+
+    def list_by_culture_and_marche(
+        self,
+        culture: CultureType,
+        marche: str,
+    ) -> list[PrixResponse]:
+        """Récupère les prix d'une culture sur un marché."""
+
+        stmt = (
+            select(PrixModel)
+            .where(
+                PrixModel.culture == culture,
+                PrixModel.marche == marche,
+            )
+            .order_by(
+                PrixModel.date_releve,
+                PrixModel.id,
+            )
+        )
+
+        return [
+            PrixResponse.model_validate(model) for model in self.session.scalars(stmt)
+        ]
 
 
 class SqlAlchemyDiagnosticRepository(RepositoryInterface[DiagnosticResponse]):

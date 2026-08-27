@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
+from sini.schemas.parcelle import CultureType
+from sini.schemas.prix import PrixResponse
 from sini.schemas.user import UserResponse
 
 T = TypeVar("T")
@@ -42,4 +44,24 @@ class UserRepositoryInterface(RepositoryInterface[UserResponse]):
     @abstractmethod
     def get_by_phone(self, phone_number: str) -> UserResponse | None:
         """Recherche un utilisateur par son numéro de téléphone."""
+        pass
+
+
+class PrixRepositoryInterface(RepositoryInterface[PrixResponse]):
+    """Interface spécialisée pour les relevés de prix."""
+
+    @abstractmethod
+    def list_by_culture(
+        self,
+        culture: CultureType,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour une culture."""
+        pass
+
+    @abstractmethod
+    def list_by_marche(
+        self,
+        marche: str,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour un marché."""
         pass
