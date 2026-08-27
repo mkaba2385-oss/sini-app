@@ -1,5 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 JWT_SECRET_KEY = os.getenv(
     "JWT_SECRET_KEY",
     "change-this-secret-key-in-production",
@@ -21,14 +25,15 @@ REFRESH_TOKEN_EXPIRE_DAYS = int(
     )
 )
 
-#Openweather
+# OpenWeather
 
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
-#africataling
+# Africa's Talking
+
 AFRICASTALKING_USERNAME = os.getenv("AFRICASTALKING_USERNAME")
 
 AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")
