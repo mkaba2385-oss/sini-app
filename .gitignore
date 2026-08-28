@@ -1,11 +1,25 @@
-# Fichiers Python
+# Variables d'environnement
+.env
+
+# Environnements virtuels
+venv/
+.venv/
+
+# Python
 __pycache__/
 *.py[cod]
-venv/
-.env
-.venv/
-# Fichiers Node / Frontend
+*.egg-info/
+
+# Tests et couverture
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node / Frontend
 node_modules/
 dist/
-.DS_Store.coverage
-.coverage
+
+# Système
+.DS_Store
