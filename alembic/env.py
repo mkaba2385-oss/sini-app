@@ -24,7 +24,13 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+database_url = DATABASE_URL.replace(
+    "postgresql://",
+    "postgresql+psycopg://",
+    1,
+)
+
+config.set_main_option("sqlalchemy.url", database_url)
 
 
 target_metadata = Base.metadata
