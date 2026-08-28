@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from sini.db.config import DATABASE_URL
 
+if DATABASE_URL is None:
+    raise RuntimeError("DATABASE_URL n'est pas configurée.")
 
 database_url = DATABASE_URL.replace(
     "postgresql://",
