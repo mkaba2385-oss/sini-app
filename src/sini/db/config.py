@@ -10,4 +10,3 @@ if not DATABASE_URL:
     raise ValueError(
         "DATABASE_URL doit être définie dans les variables d'environnement."
     )
-

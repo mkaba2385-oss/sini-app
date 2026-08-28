@@ -9,6 +9,7 @@ from sini.api.routers.photos import router as photos_router
 from sini.api.routers.prix import router as prix_router
 from sini.api.routers.seasons import router as seasons_router
 from sini.api.routers.users import router as users_router
+from sini.api.routers.weather import router as weather_router
 
 app = FastAPI(
     title="Sini API",
@@ -25,6 +26,7 @@ app.include_router(prix_router)
 app.include_router(harvests_router)
 app.include_router(seasons_router)
 app.include_router(auth_router)
+app.include_router(weather_router)
 
 
 @app.get("/")
