@@ -5,8 +5,15 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from sini.db.config import DATABASE_URL
 
+
+database_url = DATABASE_URL.replace(
+    "postgresql://",
+    "postgresql+psycopg://",
+    1,
+)
+
 engine = create_engine(
-    DATABASE_URL,
+    database_url,
     pool_pre_ping=True,
 )
 
