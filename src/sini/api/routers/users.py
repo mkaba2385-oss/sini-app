@@ -50,6 +50,17 @@ def create_user(
 
 
 @router.get(
+    "/me",
+    response_model=UserResponse,
+)
+def get_current_user_profile(
+    current_user: CurrentUserDep,
+) -> UserResponse:
+    """Récupère le profil de l'utilisateur connecté."""
+
+    return current_user
+
+@router.get(
     "/{user_id}",
     response_model=UserResponse,
 )
