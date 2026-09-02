@@ -1,6 +1,7 @@
 {
   "name": "Sini",
   "short_name": "Sini",
+  "id": "/",
   "description": "Application agricole Sini",
   "start_url": "/",
   "display": "standalone",
