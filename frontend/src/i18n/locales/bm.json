@@ -1,0 +1,30 @@
+{
+  "app": {
+    "name": "Sini"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "parcelles": "Mes parcelles"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "phone": "Numéro de téléphone",
+    "otp": "Code OTP",
+    "verify": "Vérifier"
+  },
+  "weather": {
+    "today": "Météo du jour",
+    "temperature": "Température",
+    "humidity": "Humidité",
+    "rain": "Pluie",
+    "wind": "Vent"
+  },
+  "parcelles": {
+    "title": "Mes parcelles",
+    "add": "Ajouter une parcelle"
+  },
+  "journal": {
+    "add": "Ajouter une entrée au journal"
+  }
+}

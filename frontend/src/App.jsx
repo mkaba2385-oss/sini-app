@@ -1,12 +1,7 @@
-import React from 'react';
+import AppRouter from "./router/index.jsx";
 
 function App() {
-  return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', textAlign: 'center' }}>
-      <h1>Sini</h1>
-      <p>Sini — Bientôt disponible</p>
-    </div>
-  );
+  return <AppRouter />;
 }
 
 export default App;
