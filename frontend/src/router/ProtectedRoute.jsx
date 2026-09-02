@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import useAuthStore from "../store/authStore.js";
+import Navbar from "../components/Navbar.jsx";
 
 function ProtectedRoute() {
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -15,7 +16,12 @@ function ProtectedRoute() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
 }
 
 export default ProtectedRoute;
