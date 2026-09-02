@@ -39,7 +39,7 @@ addopts = "-v --tb=short --cov=src/sini --cov-report=term-missing"
 
 [tool.mypy]
 strict = true
-python_version = "3.10"
+python_version = "3.12"
 [[tool.mypy.overrides]]
 module = ["jwt"]
 
