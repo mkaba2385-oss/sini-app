@@ -1,8 +1,7 @@
+import subprocess
 from datetime import date
-from io import BytesIO
 
 import httpx
-from pypdf import PdfReader
 
 from sini.schemas.parcelle import CultureType
 from sini.schemas.prix import PrixCreate, UnitePrix
@@ -24,13 +23,13 @@ class OmaScraper:
         return response.content
 
     def extract_text(self, pdf_content: bytes) -> str:
-        """Extrait le texte contenu dans un fichier PDF."""
-
-        reader = PdfReader(
-            BytesIO(pdf_content),
+        result = subprocess.run(
+            ["pdftotext", "-layout", "-", "-"],
+            input=pdf_content,
+            capture_output=True,
+            check=True,
         )
-
-        return "\n".join(page.extract_text() or "" for page in reader.pages)
+        return result.stdout.decode("utf-8")    
 
     def parse_prices(
         self,
