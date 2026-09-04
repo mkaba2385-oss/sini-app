@@ -105,7 +105,7 @@ function EditJournalEntryPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-green-50 p-6">
+      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-xl">
           <p className="text-gray-600">
             Chargement de l'activité...
@@ -117,9 +117,9 @@ function EditJournalEntryPage() {
 
   if (isError) {
     return (
-      <main className="min-h-screen bg-green-50 p-6">
+      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-xl">
-          <div className="rounded-xl bg-red-100 p-4 text-red-700">
+          <div className="rounded-xl bg-red-100 p-4 text-sm text-red-700 sm:text-base">
             Impossible de récupérer cette activité.
           </div>
         </div>
@@ -129,9 +129,9 @@ function EditJournalEntryPage() {
 
   if (!entry) {
     return (
-      <main className="min-h-screen bg-green-50 p-6">
+      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-xl">
-          <div className="rounded-xl bg-red-100 p-4 text-red-700">
+          <div className="rounded-xl bg-red-100 p-4 text-sm text-red-700 sm:text-base">
             Activité introuvable.
           </div>
         </div>
@@ -140,22 +140,22 @@ function EditJournalEntryPage() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 p-6">
+    <main className="min-h-screen bg-green-50 p-4 sm:p-6">
       <div className="mx-auto max-w-xl">
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl bg-white p-8 shadow"
+          className="rounded-2xl bg-white p-5 shadow sm:p-8"
         >
-          <h1 className="mb-2 text-3xl font-bold text-green-800">
+          <h1 className="mb-2 text-2xl font-bold text-green-800 sm:text-3xl">
             Modifier l'activité ✏️
           </h1>
 
-          <p className="mb-6 text-gray-600">
+          <p className="mb-6 text-sm text-gray-600 sm:text-base">
             Modifiez les informations de cette activité.
           </p>
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700">
+            <div className="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700 sm:text-base">
               {error}
             </div>
           )}
@@ -174,7 +174,7 @@ function EditJournalEntryPage() {
                 name="action_type"
                 value={form.action_type}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-green-600 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               >
                 {actionTypes.map((actionType) => (
                   <option key={actionType} value={actionType}>
@@ -199,7 +199,7 @@ function EditJournalEntryPage() {
                 value={form.title}
                 onChange={handleChange}
                 required
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-green-600 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
@@ -217,7 +217,7 @@ function EditJournalEntryPage() {
                 value={form.description}
                 onChange={handleChange}
                 rows="5"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-green-600 focus:outline-none"
+                className="w-full resize-y rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
@@ -237,16 +237,16 @@ function EditJournalEntryPage() {
                 value={form.cout_fcfa}
                 onChange={handleChange}
                 required
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-green-600 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
           </div>
 
-          <div className="mt-8 flex gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
               onClick={handleCancel}
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-3 font-semibold text-gray-700 hover:bg-gray-100"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 font-semibold text-gray-700 hover:bg-gray-100 sm:flex-1"
             >
               Annuler
             </button>
@@ -254,7 +254,7 @@ function EditJournalEntryPage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 rounded-lg bg-green-700 px-4 py-3 font-semibold text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-lg bg-green-700 px-4 py-3 font-semibold text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-1"
             >
               {saving ? "Enregistrement..." : "Enregistrer"}
             </button>

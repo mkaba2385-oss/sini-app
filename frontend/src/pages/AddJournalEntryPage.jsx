@@ -53,7 +53,9 @@ function AddJournalEntryPage() {
     const coutFcfa = Number(form.cout_fcfa);
 
     if (!Number.isFinite(coutFcfa) || coutFcfa < 0) {
-      setError("Le coût doit être un montant positif ou égal à 0 FCFA.");
+      setError(
+        "Le coût doit être un montant positif ou égal à 0 FCFA.",
+      );
       return;
     }
 
@@ -97,22 +99,22 @@ function AddJournalEntryPage() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 p-6">
+    <main className="min-h-screen bg-green-50 p-4 sm:p-6">
       <div className="mx-auto max-w-xl">
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl bg-white p-8 shadow"
+          className="rounded-2xl bg-white p-5 shadow sm:p-8"
         >
-          <h1 className="mb-2 text-3xl font-bold text-green-800">
+          <h1 className="mb-2 text-2xl font-bold text-green-800 sm:text-3xl">
             Ajouter au journal 📖
           </h1>
 
-          <p className="mb-6 text-gray-600">
+          <p className="mb-6 text-sm text-gray-600 sm:text-base">
             Ajoutez une nouvelle activité agricole.
           </p>
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700">
+            <div className="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700 sm:text-base">
               {error}
             </div>
           )}
@@ -131,7 +133,7 @@ function AddJournalEntryPage() {
                 name="action_type"
                 value={form.action_type}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 bg-white p-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               >
                 {actionTypes.map((action) => (
                   <option key={action} value={action}>
@@ -158,7 +160,7 @@ function AddJournalEntryPage() {
                 required
                 minLength={3}
                 maxLength={150}
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
@@ -178,7 +180,7 @@ function AddJournalEntryPage() {
                 placeholder="Décrivez l'activité..."
                 maxLength={1000}
                 rows={5}
-                className="w-full rounded-lg border p-3"
+                className="w-full resize-y rounded-lg border border-gray-300 p-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
@@ -198,10 +200,10 @@ function AddJournalEntryPage() {
                 step="5"
                 value={form.cout_fcfa}
                 onChange={handleChange}
-                className={`w-full rounded-lg border p-3 ${
+                className={`w-full rounded-lg border p-3 outline-none focus:ring-2 focus:ring-green-100 ${
                   error && form.cout_fcfa
-                    ? "border-red-500"
-                    : ""
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-gray-300 focus:border-green-600"
                 }`}
               />
 
@@ -210,11 +212,11 @@ function AddJournalEntryPage() {
               </p>
             </div>
 
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col gap-3 pt-4 sm:flex-row">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex-1 rounded-lg border border-gray-300 p-3 font-semibold text-gray-700 hover:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 p-3 font-semibold text-gray-700 hover:bg-gray-50 sm:flex-1"
               >
                 Annuler
               </button>
@@ -222,7 +224,7 @@ function AddJournalEntryPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-lg bg-green-700 p-3 font-semibold text-white hover:bg-green-800 disabled:opacity-50"
+                className="w-full rounded-lg bg-green-700 p-3 font-semibold text-white hover:bg-green-800 disabled:opacity-50 sm:flex-1"
               >
                 {loading ? "Enregistrement..." : "Ajouter"}
               </button>

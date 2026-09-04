@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import date
 from typing import Generic, TypeVar
 
 from sini.schemas.parcelle import CultureType
@@ -64,4 +65,13 @@ class PrixRepositoryInterface(RepositoryInterface[PrixResponse]):
         marche: str,
     ) -> list[PrixResponse]:
         """Retourne les relevés pour un marché."""
+        pass
+
+    @abstractmethod
+    def delete_by_source_and_date(
+        self,
+        source: str,
+        date_releve: date,
+    ) -> None:
+        """Supprime les relevés provenant d'une source à une date donnée."""
         pass

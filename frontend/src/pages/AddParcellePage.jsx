@@ -51,39 +51,39 @@ function AddParcellePage() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 p-6">
+    <main className="min-h-screen bg-green-50 p-4 sm:p-6">
       <div className="mx-auto max-w-2xl">
         <button
           type="button"
           onClick={() => navigate("/parcelles")}
-          className="mb-6 text-green-700 hover:underline"
+          className="mb-5 text-sm font-medium text-green-700 hover:underline sm:mb-6 sm:text-base"
         >
           ← Retour à mes parcelles
         </button>
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl bg-white p-8 shadow"
+          className="rounded-2xl bg-white p-5 shadow sm:p-8"
         >
-          <h1 className="mb-2 text-3xl font-bold text-green-800">
+          <h1 className="text-2xl font-bold text-green-800 sm:text-3xl">
             Ajouter une parcelle 🌱
           </h1>
 
-          <p className="mb-6 text-gray-600">
+          <p className="mt-2 mb-6 text-sm text-gray-600 sm:text-base">
             Enregistrez les informations de votre parcelle.
           </p>
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700">
+            <div className="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700 sm:text-base">
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
               <label
                 htmlFor="name"
-                className="mb-1 block font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 sm:text-base"
               >
                 Nom de la parcelle
               </label>
@@ -97,14 +97,14 @@ function AddParcellePage() {
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 p-3 text-base outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
             <div>
               <label
                 htmlFor="superficie_ha"
-                className="mb-1 block font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 sm:text-base"
               >
                 Superficie (hectares)
               </label>
@@ -119,14 +119,14 @@ function AddParcellePage() {
                 step="0.01"
                 placeholder="Ex : 2.5"
                 required
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 p-3 text-base outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
             <div>
               <label
                 htmlFor="culture"
-                className="mb-1 block font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 sm:text-base"
               >
                 Culture
               </label>
@@ -136,7 +136,7 @@ function AddParcellePage() {
                 name="culture"
                 value={form.culture}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 bg-white p-3 text-base outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               >
                 <option value="Coton">Coton</option>
                 <option value="Maïs">Maïs</option>
@@ -152,7 +152,7 @@ function AddParcellePage() {
             <div>
               <label
                 htmlFor="region"
-                className="mb-1 block font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 sm:text-base"
               >
                 Région
               </label>
@@ -162,7 +162,7 @@ function AddParcellePage() {
                 name="region"
                 value={form.region}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 bg-white p-3 text-base outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               >
                 <option value="Bamako">Bamako</option>
                 <option value="Kayes">Kayes</option>
@@ -181,7 +181,7 @@ function AddParcellePage() {
             <div>
               <label
                 htmlFor="commune"
-                className="mb-1 block font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 sm:text-base"
               >
                 Commune
               </label>
@@ -193,16 +193,18 @@ function AddParcellePage() {
                 onChange={handleChange}
                 placeholder="Ex : Pelengana"
                 maxLength={100}
-                className="w-full rounded-lg border p-3"
+                className="w-full rounded-lg border border-gray-300 p-3 text-base outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-green-700 p-3 font-semibold text-white hover:bg-green-800 disabled:opacity-50"
+              className="w-full rounded-lg bg-green-700 p-3.5 font-semibold text-white transition hover:bg-green-800 disabled:opacity-50"
             >
-              {loading ? "Enregistrement..." : "Enregistrer la parcelle"}
+              {loading
+                ? "Enregistrement..."
+                : "Enregistrer la parcelle"}
             </button>
           </div>
         </form>

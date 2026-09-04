@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from sini.repositories.base import PrixRepositoryInterface
 from sini.schemas.parcelle import CultureType
@@ -90,3 +90,15 @@ class PrixService:
 
         self.get_by_id(prix_id)
         self.repo.delete(prix_id)
+
+    def delete_by_source_and_date(
+        self,
+        source: str,
+        date_releve: date,
+    ) -> None:
+        """Supprime les relevés d'une source à une date donnée."""
+
+        self.repo.delete_by_source_and_date(
+            source=source,
+            date_releve=date_releve,
+        )

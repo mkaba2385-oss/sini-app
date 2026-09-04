@@ -9,7 +9,11 @@ from sini.scrapers.oma import OmaScraper
 def main() -> None:
     """Importe les prix d'un bulletin OMA dans la base."""
 
-    path = Path("data/oma/communique_du_04_au_10_novembre_2021.pdf")
+    path = Path(
+        "data/oma/communique_du_04_au_10_novembre_2021.pdf"
+    )
+
+    date_releve = date(2021, 11, 10)
 
     scraper = OmaScraper()
 
@@ -19,12 +23,17 @@ def main() -> None:
 
     prices = scraper.parse_prices(
         text,
-        date(2021, 11, 10),
+        date_releve,
     )
 
     with SessionLocal() as session:
         prix_service = ServiceFactory.create_prix_service(
             session=session,
+        )
+
+        prix_service.delete_by_source_and_date(
+            source="OMA",
+            date_releve=date_releve,
         )
 
         for price in prices:

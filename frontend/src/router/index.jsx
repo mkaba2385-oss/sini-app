@@ -12,6 +12,7 @@ import OtpPage from "../pages/OtpPage.jsx";
 import ParcellesPage from "../pages/ParcellesPage.jsx";
 import RegisterPage from "../pages/RegisterPage.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import PrixPage from "../pages/PrixPage.jsx";
 
 function AppRouter() {
   return (
@@ -69,6 +70,11 @@ function AppRouter() {
           <Route
             path="/journal/:entryId/edit"
             element={<EditJournalEntryPage />}
+          />
+
+          <Route
+            path="/prix"
+            element={<PrixPage />}
           />
         </Route>
       </Routes>

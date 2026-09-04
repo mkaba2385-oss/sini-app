@@ -14,6 +14,8 @@ class CultureType(str, Enum):
     SORGHO = "Sorgho"
     ARACHIDE = "Arachide"
     MARAICHAGE = "Maraîchage"
+    NIEBE = "Niébé"
+    FONIO = "Fonio"
     AUTRE = "Autre"
 
 

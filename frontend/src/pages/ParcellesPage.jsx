@@ -125,11 +125,13 @@ function ParcellesPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-green-50 p-6">
+      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-4xl">
-          <p className="text-gray-600">
-            Chargement des parcelles...
-          </p>
+          <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
+            <p className="text-gray-600">
+              Chargement des parcelles...
+            </p>
+          </div>
         </div>
       </main>
     );
@@ -137,9 +139,9 @@ function ParcellesPage() {
 
   if (isError) {
     return (
-      <main className="min-h-screen bg-green-50 p-6">
+      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-4xl">
-          <div className="rounded-xl bg-red-100 p-4 text-red-700">
+          <div className="rounded-xl bg-red-100 p-4 text-red-700 sm:p-5">
             Impossible de récupérer vos parcelles.
           </div>
         </div>
@@ -148,23 +150,23 @@ function ParcellesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 p-6">
+    <main className="min-h-screen bg-green-50 p-4 sm:p-6">
       <div className="mx-auto max-w-4xl">
         {/* En-tête */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-green-800">
+            <h1 className="text-2xl font-bold text-green-800 sm:text-3xl">
               Mes parcelles 🌱
             </h1>
 
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-sm text-gray-600 sm:text-base">
               Retrouvez ici toutes vos parcelles.
             </p>
           </div>
 
           <Link
             to="/parcelles/new"
-            className="rounded-lg bg-green-700 px-4 py-3 font-semibold text-white hover:bg-green-800"
+            className="w-full rounded-lg bg-green-700 px-4 py-3 text-center font-semibold text-white hover:bg-green-800 sm:w-auto"
           >
             + Ajouter
           </Link>
@@ -172,7 +174,7 @@ function ParcellesPage() {
 
         {/* Aucune parcelle */}
         {parcelles.length === 0 ? (
-          <div className="rounded-2xl bg-white p-8 text-center shadow">
+          <div className="rounded-2xl bg-white p-6 text-center shadow sm:p-8">
             <p className="mb-4 text-gray-600">
               Vous n'avez encore aucune parcelle.
             </p>
@@ -186,55 +188,87 @@ function ParcellesPage() {
           </div>
         ) : (
           /* Liste des parcelles */
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             {parcelles.map((parcelle) => (
               <article
                 key={parcelle.id}
-                className="rounded-2xl bg-white p-6 shadow"
+                className="rounded-2xl bg-white p-4 shadow sm:p-6"
               >
-                <h2 className="text-xl font-bold text-green-800">
-                  {parcelle.name}
-                </h2>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="break-words text-xl font-bold text-green-800">
+                      {parcelle.name}
+                    </h2>
 
-                <div className="mt-4 space-y-2 text-gray-700">
-                  <p>
-                    <strong>Culture :</strong>{" "}
-                    {parcelle.culture}
-                  </p>
-
-                  <p>
-                    <strong>Superficie :</strong>{" "}
-                    {parcelle.superficie_ha} ha
-                  </p>
-
-                  <p>
-                    <strong>Région :</strong>{" "}
-                    {parcelle.region}
-                  </p>
-
-                  {parcelle.commune && (
-                    <p>
-                      <strong>Commune :</strong>{" "}
-                      {parcelle.commune}
+                    <p className="mt-1 text-sm text-gray-500">
+                      {parcelle.culture}
                     </p>
-                  )}
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-xl bg-gray-50 p-4">
+                  <div className="grid gap-3 text-sm sm:grid-cols-2">
+                    <div>
+                      <p className="text-gray-500">
+                        Culture
+                      </p>
+
+                      <p className="mt-1 font-semibold text-gray-800">
+                        {parcelle.culture}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-gray-500">
+                        Superficie
+                      </p>
+
+                      <p className="mt-1 font-semibold text-gray-800">
+                        {parcelle.superficie_ha} ha
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-gray-500">
+                        Région
+                      </p>
+
+                      <p className="mt-1 font-semibold text-gray-800">
+                        {parcelle.region}
+                      </p>
+                    </div>
+
+                    {parcelle.commune && (
+                      <div>
+                        <p className="text-gray-500">
+                          Commune
+                        </p>
+
+                        <p className="mt-1 font-semibold text-gray-800">
+                          {parcelle.commune}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Météo de la région */}
-                <ParcelleWeather region={parcelle.region} />
+                <ParcelleWeather
+                  region={parcelle.region}
+                />
 
                 {/* Actions */}
-                <div className="mt-6 grid grid-cols-3 gap-2">
+                <div className="mt-6 grid gap-2 sm:grid-cols-3">
                   <Link
                     to={`/parcelles/${parcelle.id}/journal`}
-                    className="rounded-lg bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-green-700"
+                    className="rounded-lg bg-green-600 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-green-700"
                   >
                     Journal
                   </Link>
 
                   <Link
                     to={`/parcelles/${parcelle.id}/edit`}
-                    className="rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700"
+                    className="rounded-lg bg-blue-600 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700"
                   >
                     Modifier
                   </Link>
@@ -242,7 +276,7 @@ function ParcellesPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(parcelle)}
-                    className="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                    className="rounded-lg bg-red-600 px-3 py-3 text-sm font-semibold text-white hover:bg-red-700"
                   >
                     Supprimer
                   </button>

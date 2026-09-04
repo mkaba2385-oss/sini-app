@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date
 from typing import Any
 
 from pydantic import BaseModel
@@ -313,6 +314,23 @@ class SqlAlchemyPrixRepository(PrixRepositoryInterface):
         if model is not None:
             self.session.delete(model)
             self.session.flush()
+
+
+    def delete_by_source_and_date(
+        self,
+        source: str,
+        date_releve: date,
+    ) -> None:
+        """Supprime les relevés d'une source à une date donnée."""
+
+        self.session.execute(
+            delete(PrixModel).where(
+                PrixModel.source == source,
+                PrixModel.date_releve == date_releve,
+            )
+        )
+
+        self.session.flush()
 
     def list_by_culture(
         self,

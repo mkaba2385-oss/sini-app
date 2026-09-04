@@ -36,6 +36,17 @@ class PrixModel(Base):
         index=True,
     )
 
+    variete: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    type_prix: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        index=True,
+    )
+
     marche: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
@@ -59,6 +70,11 @@ class PrixModel(Base):
         Date,
         nullable=False,
         index=True,
+    )
+
+    source: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
