@@ -36,6 +36,10 @@ function AddJournalEntryPage() {
       ...current,
       [name]: value,
     }));
+
+    if (name === "cout_fcfa") {
+      setError("");
+    }
   }
 
   async function handleSubmit(event) {
@@ -43,6 +47,23 @@ function AddJournalEntryPage() {
 
     if (!parcelleId) {
       setError("Aucune parcelle sélectionnée.");
+      return;
+    }
+
+    const coutFcfa = Number(form.cout_fcfa);
+
+    if (!Number.isFinite(coutFcfa) || coutFcfa < 0) {
+      setError("Le coût doit être un montant positif ou égal à 0 FCFA.");
+      return;
+    }
+
+    if (!Number.isInteger(coutFcfa)) {
+      setError("Le coût doit être un nombre entier en FCFA.");
+      return;
+    }
+
+    if (coutFcfa % 5 !== 0) {
+      setError("Le coût doit être un multiple de 5 FCFA.");
       return;
     }
 
@@ -55,10 +76,9 @@ function AddJournalEntryPage() {
         action_type: form.action_type,
         title: form.title,
         description: form.description || null,
-        cout_fcfa: Number(form.cout_fcfa),
+        cout_fcfa: coutFcfa,
       });
 
-      // Retour vers le journal de la parcelle
       navigate(`/parcelles/${parcelleId}/journal`);
     } catch (err) {
       console.error(err);
@@ -175,11 +195,19 @@ function AddJournalEntryPage() {
                 name="cout_fcfa"
                 type="number"
                 min="0"
-                step="1"
+                step="5"
                 value={form.cout_fcfa}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-3"
+                className={`w-full rounded-lg border p-3 ${
+                  error && form.cout_fcfa
+                    ? "border-red-500"
+                    : ""
+                }`}
               />
+
+              <p className="mt-1 text-sm text-gray-500">
+                Le montant doit être un multiple de 5 FCFA.
+              </p>
             </div>
 
             <div className="flex gap-3 pt-4">
