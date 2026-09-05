@@ -130,12 +130,16 @@ function PrixPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="rounded-2xl bg-white p-6 shadow">
-            <p className="text-gray-600">
-              Chargement des prix du marché...
-            </p>
+      <main className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4 sm:p-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-3xl border border-green-100 bg-white p-6 shadow-lg shadow-green-900/5 sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="h-5 w-5 animate-pulse rounded-full bg-green-200" />
+
+              <p className="text-sm font-medium text-gray-600 sm:text-base">
+                Chargement des prix du marché...
+              </p>
+            </div>
           </div>
         </div>
       </main>
@@ -144,16 +148,25 @@ function PrixPage() {
 
   if (isError) {
     return (
-      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="rounded-2xl bg-red-100 p-6 text-red-700 shadow">
-            <h1 className="text-lg font-bold">
-              Impossible de récupérer les prix.
-            </h1>
+      <main className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4 sm:p-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700 shadow-sm sm:p-8">
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-lg font-bold">
+                !
+              </div>
 
-            <p className="mt-2 text-sm">
-              Vérifiez la connexion au serveur.
-            </p>
+              <div>
+                <h1 className="text-lg font-bold">
+                  Impossible de récupérer les prix.
+                </h1>
+
+                <p className="mt-2 text-sm">
+                  Vérifiez la connexion au serveur puis
+                  réessayez.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -161,22 +174,35 @@ function PrixPage() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 p-4 sm:p-6">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4 sm:p-6">
+      <div className="mx-auto max-w-7xl">
+        {/* En-tête */}
         <header className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-green-800 sm:text-3xl">
-            Prix des marchés
-          </h1>
+          <div className="rounded-3xl border border-green-100 bg-white p-5 shadow-lg shadow-green-900/5 sm:p-8">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-2xl">
+                📈
+              </div>
 
-          <p className="mt-2 text-sm text-gray-600 sm:text-base">
-            Consultez les prix agricoles relevés par l'OMA.
-          </p>
+              <div>
+                <h1 className="text-2xl font-bold text-green-800 sm:text-3xl">
+                  Prix des marchés
+                </h1>
+
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
+                  Consultez les prix agricoles relevés par
+                  l&apos;OMA et suivez leur évolution selon
+                  les cultures et les marchés.
+                </p>
+              </div>
+            </div>
+          </div>
         </header>
 
         {/* Statistiques générales */}
         <section className="mb-6 sm:mb-8">
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
+            <div className="rounded-2xl border border-green-100 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
               <p className="text-sm font-medium text-gray-500">
                 Relevés affichés
               </p>
@@ -192,17 +218,23 @@ function PrixPage() {
               )}
             </div>
 
-            <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
+            <div className="rounded-2xl border border-green-100 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
               <p className="text-sm font-medium text-gray-500">
-                Source
+                Source des données
               </p>
 
-              <p className="mt-2 text-2xl font-bold text-green-700">
-                OMA
-              </p>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-sm font-bold text-green-700">
+                  O
+                </span>
+
+                <p className="text-2xl font-bold text-green-700">
+                  OMA
+                </p>
+              </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
+            <div className="rounded-2xl border border-green-100 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
               <p className="text-sm font-medium text-gray-500">
                 Dernier relevé
               </p>
@@ -219,15 +251,24 @@ function PrixPage() {
         </section>
 
         {/* Filtres */}
-        <section className="mb-6 rounded-2xl bg-white p-5 shadow sm:mb-8 sm:p-6">
-          <div className="mb-5">
-            <h2 className="text-xl font-bold text-green-800">
-              Filtrer les prix
-            </h2>
+        <section className="mb-6 rounded-3xl border border-green-100 bg-white p-5 shadow-lg shadow-green-900/5 sm:mb-8 sm:p-6">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
+                Filtrer les prix
+              </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
-              Sélectionnez une culture ou un marché.
-            </p>
+              <p className="mt-1 text-sm text-gray-500">
+                Affinez les relevés par culture ou par
+                marché.
+              </p>
+            </div>
+
+            {(cultureFilter || marcheFilter) && (
+              <span className="self-start rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                Filtres actifs
+              </span>
+            )}
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -245,7 +286,7 @@ function PrixPage() {
                 onChange={(event) =>
                   setCultureFilter(event.target.value)
                 }
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-700 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-700 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
               >
                 <option value="">
                   Toutes les cultures
@@ -273,7 +314,7 @@ function PrixPage() {
                 onChange={(event) =>
                   setMarcheFilter(event.target.value)
                 }
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-700 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-700 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
               >
                 <option value="">
                   Tous les marchés
@@ -291,7 +332,7 @@ function PrixPage() {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="w-full rounded-lg bg-gray-100 px-4 py-3 font-semibold text-gray-700 transition hover:bg-gray-200"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-semibold text-gray-700 transition hover:bg-gray-100"
               >
                 Réinitialiser les filtres
               </button>
@@ -300,67 +341,79 @@ function PrixPage() {
         </section>
 
         {/* Évolution des prix */}
-        <section className="mb-6 rounded-2xl bg-white p-5 shadow sm:mb-8 sm:p-6">
-          <div className="mb-5">
-            <h2 className="text-xl font-bold text-green-800">
-              Évolution des prix
-            </h2>
+        <section className="mb-6 overflow-hidden rounded-3xl border border-green-100 bg-white shadow-lg shadow-green-900/5 sm:mb-8">
+          <div className="border-b border-green-100 p-5 sm:p-6">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100">
+                📊
+              </div>
 
-            <p className="mt-1 text-sm text-gray-500">
-              Consultez l'évolution du prix moyen d'une
-              culture.
-            </p>
-          </div>
+              <div>
+                <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
+                  Évolution des prix
+                </h2>
 
-          <div className="mb-6">
-            <label
-              htmlFor="graph-culture"
-              className="mb-2 block text-sm font-semibold text-gray-700"
-            >
-              Culture à afficher
-            </label>
-
-            <select
-              id="graph-culture"
-              value={cultureGraphique}
-              onChange={(event) =>
-                setGraphCulture(event.target.value)
-              }
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-700 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 sm:max-w-md"
-            >
-              {culturesGraphique.length === 0 ? (
-                <option value="">
-                  Aucune culture disponible
-                </option>
-              ) : (
-                culturesGraphique.map((culture) => (
-                  <option key={culture} value={culture}>
-                    {culture}
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-
-          {cultureGraphique ? (
-            <PrixEvolutionChart data={prixGraphique} />
-          ) : (
-            <div className="rounded-xl bg-gray-50 p-6 text-center text-gray-500">
-              Aucune donnée disponible pour afficher
-              l'évolution des prix.
+                <p className="mt-1 text-sm text-gray-500">
+                  Consultez l&apos;évolution du prix moyen
+                  d&apos;une culture.
+                </p>
+              </div>
             </div>
-          )}
+          </div>
+
+          <div className="p-5 sm:p-6">
+            <div className="mb-6">
+              <label
+                htmlFor="graph-culture"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Culture à afficher
+              </label>
+
+              <select
+                id="graph-culture"
+                value={cultureGraphique}
+                onChange={(event) =>
+                  setGraphCulture(event.target.value)
+                }
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-700 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100 sm:max-w-md"
+              >
+                {culturesGraphique.length === 0 ? (
+                  <option value="">
+                    Aucune culture disponible
+                  </option>
+                ) : (
+                  culturesGraphique.map((culture) => (
+                    <option key={culture} value={culture}>
+                      {culture}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            {cultureGraphique ? (
+              <div className="overflow-hidden rounded-2xl border border-gray-100 bg-gray-50 p-2 sm:p-4">
+                <PrixEvolutionChart data={prixGraphique} />
+              </div>
+            ) : (
+              <div className="rounded-2xl bg-gray-50 p-8 text-center text-gray-500">
+                Aucune donnée disponible pour afficher
+                l&apos;évolution des prix.
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Statistiques par culture */}
-        <section className="mb-6 rounded-2xl bg-white p-5 shadow sm:mb-8 sm:p-6">
+        <section className="mb-6 rounded-3xl border border-green-100 bg-white p-5 shadow-lg shadow-green-900/5 sm:mb-8 sm:p-6">
           <div className="mb-5">
-            <h2 className="text-xl font-bold text-green-800">
+            <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
               Statistiques par culture
             </h2>
 
             <p className="mt-1 text-sm text-gray-500">
-              Comparaison des prix minimum, moyen et maximum.
+              Comparez les prix minimum, moyen et maximum.
             </p>
           </div>
 
@@ -369,20 +422,26 @@ function PrixPage() {
               {statistiques.map((statistique) => (
                 <article
                   key={statistique.culture}
-                  className="rounded-xl border border-gray-200 p-4"
+                  className="rounded-2xl border border-gray-200 bg-gray-50/50 p-5 transition hover:border-green-200 hover:bg-green-50/40 hover:shadow-sm"
                 >
-                  <div>
-                    <h3 className="text-lg font-bold text-green-800">
-                      {statistique.culture}
-                    </h3>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-green-800">
+                        {statistique.culture}
+                      </h3>
 
-                    <p className="mt-1 text-sm text-gray-500">
-                      {statistique.nombre} relevé
-                      {statistique.nombre > 1 ? "s" : ""}
-                    </p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {statistique.nombre} relevé
+                        {statistique.nombre > 1 ? "s" : ""}
+                      </p>
+                    </div>
+
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-100 text-sm">
+                      🌾
+                    </div>
                   </div>
 
-                  <div className="mt-4 space-y-3">
+                  <div className="mt-5 space-y-3">
                     <div className="flex items-center justify-between gap-4">
                       <span className="text-sm text-gray-500">
                         Prix minimum
@@ -396,8 +455,8 @@ function PrixPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-sm text-gray-500">
+                    <div className="flex items-center justify-between gap-4 rounded-xl bg-green-50 px-3 py-2">
+                      <span className="text-sm font-medium text-gray-600">
                         Prix moyen
                       </span>
 
@@ -429,39 +488,48 @@ function PrixPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl bg-gray-50 p-6 text-center text-gray-500">
-              Aucune statistique disponible pour les filtres
-              sélectionnés.
+            <div className="rounded-2xl bg-gray-50 p-8 text-center text-gray-500">
+              Aucune statistique disponible pour les
+              filtres sélectionnés.
             </div>
           )}
         </section>
 
         {/* Relevés */}
-        <section className="rounded-2xl bg-white shadow">
-          <div className="border-b border-gray-200 p-5 sm:p-6">
-            <h2 className="text-xl font-bold text-green-800">
-              Relevés de prix
-            </h2>
+        <section className="overflow-hidden rounded-3xl border border-green-100 bg-white shadow-lg shadow-green-900/5">
+          <div className="border-b border-green-100 p-5 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
+                  Relevés de prix
+                </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
-              Prix moyens relevés sur les marchés.
-            </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Prix moyens relevés sur les marchés.
+                </p>
+              </div>
+
+              <span className="self-start rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
+                {prixFiltres.length} relevé
+                {prixFiltres.length > 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
 
           {/* Version mobile */}
-          <div className="space-y-4 p-4 md:hidden">
+          <div className="space-y-4 bg-gray-50/50 p-4 md:hidden">
             {prixFiltres.map((item) => (
               <article
                 key={item.id}
-                className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-green-800">
+                  <div className="min-w-0">
+                    <h3 className="break-words text-lg font-bold text-green-800">
                       {item.culture}
                     </h3>
 
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 break-words text-sm text-gray-500">
                       {item.variete ||
                         "Variété non renseignée"}
                     </p>
@@ -472,7 +540,7 @@ function PrixPage() {
                   </span>
                 </div>
 
-                <div className="mt-4 rounded-xl bg-green-50 p-4">
+                <div className="mt-4 rounded-2xl bg-green-50 p-4">
                   <p className="text-sm font-medium text-gray-500">
                     Prix moyen
                   </p>
@@ -489,18 +557,18 @@ function PrixPage() {
                   </p>
                 </div>
 
-                <div className="mt-4 space-y-2 text-sm">
-                  <div className="flex justify-between gap-4">
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-start justify-between gap-4 text-sm">
                     <span className="text-gray-500">
                       Marché
                     </span>
 
-                    <span className="text-right font-semibold text-gray-800">
+                    <span className="max-w-[65%] break-words text-right font-semibold text-gray-800">
                       {item.marche}
                     </span>
                   </div>
 
-                  <div className="flex justify-between gap-4">
+                  <div className="flex items-center justify-between gap-4 text-sm">
                     <span className="text-gray-500">
                       Date
                     </span>
@@ -555,9 +623,9 @@ function PrixPage() {
                 {prixFiltres.map((item) => (
                   <tr
                     key={item.id}
-                    className="border-t border-gray-100 hover:bg-gray-50"
+                    className="border-t border-gray-100 transition hover:bg-green-50/40"
                   >
-                    <td className="px-6 py-4 font-medium text-gray-800">
+                    <td className="px-6 py-4 font-semibold text-gray-800">
                       {item.culture}
                     </td>
 
@@ -598,7 +666,7 @@ function PrixPage() {
           </div>
 
           {prixFiltres.length === 0 && (
-            <div className="p-8 text-center text-gray-500">
+            <div className="border-t border-gray-100 p-8 text-center text-gray-500">
               Aucun relevé ne correspond aux filtres
               sélectionnés.
             </div>

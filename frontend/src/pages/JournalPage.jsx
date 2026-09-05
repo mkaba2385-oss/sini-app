@@ -19,6 +19,7 @@ function JournalPage() {
   } = useQuery({
     queryKey: ["parcelle", parcelleId],
     queryFn: () => getParcelle(parcelleId),
+    enabled: Boolean(parcelleId),
   });
 
   const {
@@ -28,6 +29,7 @@ function JournalPage() {
   } = useQuery({
     queryKey: ["journal", parcelleId],
     queryFn: () => getJournalByParcelle(parcelleId),
+    enabled: Boolean(parcelleId),
   });
 
   const {
@@ -37,6 +39,7 @@ function JournalPage() {
   } = useQuery({
     queryKey: ["journal-stats", parcelleId],
     queryFn: () => getJournalStats(parcelleId),
+    enabled: Boolean(parcelleId),
   });
 
   async function handleDelete(entry) {
@@ -82,7 +85,7 @@ function JournalPage() {
     return (
       <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-4xl">
-          <div className="rounded-xl bg-red-100 p-4 text-red-700">
+          <div className="rounded-xl bg-red-100 p-4 text-sm text-red-700 sm:text-base">
             Impossible de récupérer le journal.
           </div>
         </div>
@@ -94,8 +97,8 @@ function JournalPage() {
     <main className="min-h-screen bg-green-50 p-4 sm:p-6">
       <div className="mx-auto max-w-4xl">
         {/* En-tête */}
-        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
             <Link
               to="/parcelles"
               className="text-sm font-medium text-green-700 hover:text-green-900 sm:text-base"
@@ -103,50 +106,54 @@ function JournalPage() {
               ← Mes parcelles
             </Link>
 
-            <h1 className="mt-3 text-2xl font-bold text-green-800 sm:text-3xl">
+            <h1 className="mt-3 break-words text-2xl font-bold text-green-800 sm:text-3xl">
               Journal 🌱
             </h1>
 
-            <p className="mt-2 text-sm text-gray-600 sm:text-base">
+            <p className="mt-2 break-words text-sm text-gray-600 sm:text-base">
               {parcelle?.name}
             </p>
           </div>
 
           <Link
             to={`/journal/new?parcelle=${parcelleId}`}
-            className="w-full rounded-lg bg-green-700 px-4 py-3 text-center font-semibold text-white hover:bg-green-800 sm:w-auto"
+            className="w-full rounded-lg bg-green-700 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-800 sm:w-auto"
           >
-            + Ajouter
+            + Ajouter une activité
           </Link>
         </div>
 
         {/* Statistiques */}
         <section className="mb-6 sm:mb-8">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-xl font-bold text-green-800">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
               Statistiques 📊
             </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Résumé des activités de cette parcelle
+            </p>
           </div>
 
           {loadingStats ? (
             <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 sm:text-base">
                 Chargement des statistiques...
               </p>
             </div>
           ) : statsError ? (
-            <div className="rounded-2xl bg-red-100 p-4 text-red-700">
+            <div className="rounded-2xl bg-red-100 p-4 text-sm text-red-700 sm:text-base">
               Impossible de récupérer les statistiques.
             </div>
           ) : stats ? (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {/* Nombre d'activités */}
               <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
                 <p className="text-sm font-medium text-gray-500">
-                  Activités
+                  Activités enregistrées
                 </p>
 
-                <p className="mt-2 text-3xl font-bold text-green-700">
+                <p className="mt-2 text-3xl font-bold text-green-700 sm:text-4xl">
                   {stats.nombre_entrees}
                 </p>
               </div>
@@ -167,7 +174,7 @@ function JournalPage() {
             </div>
           ) : (
             <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 sm:text-base">
                 Aucune statistique disponible.
               </p>
             </div>
@@ -177,20 +184,26 @@ function JournalPage() {
         {/* Liste des activités */}
         <section>
           <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-xl font-bold text-green-800">
-              Activités agricoles
-            </h2>
+            <div>
+              <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
+                Activités agricoles
+              </h2>
 
-            <span className="text-sm text-gray-500">
-              {entries.length} activité(s)
+              <p className="mt-1 text-sm text-gray-500">
+                Historique des activités de la parcelle
+              </p>
+            </div>
+
+            <span className="self-start rounded-full bg-white px-3 py-1 text-sm font-medium text-gray-600 shadow-sm sm:self-auto">
+              {entries.length} activité
+              {entries.length > 1 ? "s" : ""}
             </span>
           </div>
 
           {entries.length === 0 ? (
             <div className="rounded-2xl bg-white p-6 text-center shadow sm:p-8">
               <p className="mb-4 text-gray-600">
-                Aucune activité enregistrée pour cette
-                parcelle.
+                Aucune activité enregistrée pour cette parcelle.
               </p>
 
               <Link
@@ -214,7 +227,7 @@ function JournalPage() {
                         {entry.action_type}
                       </span>
 
-                      <h3 className="mt-3 break-words text-xl font-bold text-gray-800">
+                      <h3 className="mt-3 break-words text-lg font-bold text-gray-800 sm:text-xl">
                         {entry.title}
                       </h3>
                     </div>
@@ -253,7 +266,7 @@ function JournalPage() {
                   <div className="mt-5 grid gap-2 sm:grid-cols-2">
                     <Link
                       to={`/journal/${entry.id}/edit?parcelle=${parcelleId}`}
-                      className="rounded-lg bg-blue-600 px-4 py-3 text-center font-semibold text-white hover:bg-blue-700"
+                      className="rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 sm:text-base"
                     >
                       Modifier
                     </Link>
@@ -261,7 +274,7 @@ function JournalPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(entry)}
-                      className="rounded-lg bg-red-600 px-4 py-3 font-semibold text-white hover:bg-red-700"
+                      className="rounded-lg bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
                     >
                       Supprimer
                     </button>

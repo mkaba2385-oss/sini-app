@@ -4,6 +4,16 @@ import { Link } from "react-router-dom";
 import { deleteParcelle, getParcelles } from "../api/parcelles.js";
 import { getWeather } from "../api/weather.js";
 
+function Icon({ children, className = "" }) {
+  return (
+    <div
+      className={`flex h-11 w-11 items-center justify-center rounded-xl ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
 function ParcelleWeather({ region }) {
   const {
     data: weather,
@@ -17,72 +27,114 @@ function ParcelleWeather({ region }) {
 
   if (isLoading) {
     return (
-      <div className="mt-5 rounded-xl bg-gray-50 p-4">
-        <p className="text-sm text-gray-500">
-          Chargement de la météo...
-        </p>
+      <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-5">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-200" />
+
+          <div className="flex-1">
+            <div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
+            <div className="mt-2 h-3 w-36 animate-pulse rounded bg-slate-200" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (isError || !weather) {
     return (
-      <div className="mt-5 rounded-xl bg-red-50 p-4">
-        <p className="text-sm text-red-600">
-          Météo indisponible.
+      <div className="mt-5 rounded-2xl border border-red-100 bg-red-50 p-5">
+        <p className="text-sm font-medium text-red-700">
+          Météo indisponible pour cette région.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="mt-5 rounded-xl bg-blue-50 p-4">
-      <h3 className="mb-3 font-semibold text-blue-800">
-        🌤️ Météo
-      </h3>
+    <div className="mt-5 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50">
+      {/* En-tête météo */}
+      <div className="flex items-center justify-between border-b border-slate-100 bg-white px-5 py-4">
+        <div className="flex items-center gap-3">
+          <Icon className="bg-blue-50 text-xl">☁️</Icon>
 
-      <div className="grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <p className="text-gray-500">Température</p>
-          <p className="font-bold text-gray-800">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              Conditions météo
+            </p>
+
+            <p className="text-xs text-slate-500">
+              {region}
+            </p>
+          </div>
+        </div>
+
+        <span className="text-xs font-medium text-slate-400">
+          Aujourd'hui
+        </span>
+      </div>
+
+      {/* Données météo */}
+      <div className="grid grid-cols-2 divide-x divide-y divide-slate-200 sm:grid-cols-4 sm:divide-y-0">
+        <div className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Température
+          </p>
+
+          <p className="mt-1 text-lg font-bold text-slate-900">
             {Number(weather.temperature).toFixed(1)} °C
           </p>
         </div>
 
-        <div>
-          <p className="text-gray-500">Humidité</p>
-          <p className="font-bold text-gray-800">
+        <div className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Humidité
+          </p>
+
+          <p className="mt-1 text-lg font-bold text-slate-900">
             {weather.humidite} %
           </p>
         </div>
 
-        <div>
-          <p className="text-gray-500">Pluie</p>
-          <p className="font-bold text-gray-800">
+        <div className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Pluie
+          </p>
+
+          <p className="mt-1 text-lg font-bold text-slate-900">
             {weather.pluie_mm} mm
           </p>
         </div>
 
-        <div>
-          <p className="text-gray-500">Vent</p>
-          <p className="font-bold text-gray-800">
+        <div className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Vent
+          </p>
+
+          <p className="mt-1 text-lg font-bold text-slate-900">
             {Number(weather.vent_kmh).toFixed(1)} km/h
           </p>
         </div>
       </div>
 
-      {weather.alerte_secheresse && (
-        <div className="mt-4 rounded-lg bg-orange-100 p-3">
+      {/* État sécheresse */}
+      {weather.alerte_secheresse ? (
+        <div className="border-t border-orange-100 bg-orange-50 px-5 py-4">
           <p className="text-sm font-semibold text-orange-800">
-            ⚠️ Alerte sécheresse
+            Alerte sécheresse
+          </p>
+
+          <p className="mt-1 text-xs text-orange-700">
+            Surveillez les conditions de votre parcelle.
           </p>
         </div>
-      )}
-
-      {!weather.alerte_secheresse && (
-        <div className="mt-4 rounded-lg bg-green-100 p-3">
+      ) : (
+        <div className="border-t border-green-100 bg-green-50 px-5 py-4">
           <p className="text-sm font-semibold text-green-800">
-            ✅ Pas d'alerte sécheresse
+            Conditions normales
+          </p>
+
+          <p className="mt-1 text-xs text-green-700">
+            Aucune alerte sécheresse actuellement.
           </p>
         </div>
       )}
@@ -123,26 +175,42 @@ function ParcellesPage() {
     }
   }
 
+  /* ==================== CHARGEMENT ==================== */
+
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
-        <div className="mx-auto max-w-4xl">
-          <div className="rounded-2xl bg-white p-5 shadow sm:p-6">
-            <p className="text-gray-600">
-              Chargement des parcelles...
-            </p>
+      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="animate-pulse">
+              <div className="h-8 w-56 rounded-lg bg-slate-200" />
+              <div className="mt-3 h-4 w-80 max-w-full rounded bg-slate-200" />
+
+              <div className="mt-8 grid gap-5 md:grid-cols-2">
+                <div className="h-72 rounded-2xl bg-slate-100" />
+                <div className="h-72 rounded-2xl bg-slate-100" />
+              </div>
+            </div>
           </div>
         </div>
       </main>
     );
   }
 
+  /* ==================== ERREUR ==================== */
+
   if (isError) {
     return (
-      <main className="min-h-screen bg-green-50 p-4 sm:p-6">
-        <div className="mx-auto max-w-4xl">
-          <div className="rounded-xl bg-red-100 p-4 text-red-700 sm:p-5">
-            Impossible de récupérer vos parcelles.
+      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="rounded-3xl border border-red-100 bg-red-50 p-6">
+            <p className="font-semibold text-red-800">
+              Impossible de récupérer vos parcelles.
+            </p>
+
+            <p className="mt-1 text-sm text-red-600">
+              Vérifiez votre connexion puis réessayez.
+            </p>
           </div>
         </div>
       </main>
@@ -150,141 +218,303 @@ function ParcellesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 p-4 sm:p-6">
-      <div className="mx-auto max-w-4xl">
-        {/* En-tête */}
-        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-green-800 sm:text-3xl">
-              Mes parcelles 🌱
-            </h1>
+    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
 
-            <p className="mt-2 text-sm text-gray-600 sm:text-base">
-              Retrouvez ici toutes vos parcelles.
-            </p>
-          </div>
+        {/* ==================== EN-TÊTE ==================== */}
 
-          <Link
-            to="/parcelles/new"
-            className="w-full rounded-lg bg-green-700 px-4 py-3 text-center font-semibold text-white hover:bg-green-800 sm:w-auto"
-          >
-            + Ajouter
-          </Link>
-        </div>
+        <header className="mb-8">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-800">
+                <span>🌱</span>
+                <span>Mon exploitation</span>
+              </div>
 
-        {/* Aucune parcelle */}
-        {parcelles.length === 0 ? (
-          <div className="rounded-2xl bg-white p-6 text-center shadow sm:p-8">
-            <p className="mb-4 text-gray-600">
-              Vous n'avez encore aucune parcelle.
-            </p>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                Mes parcelles
+              </h1>
+
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
+                Retrouvez et gérez facilement vos parcelles agricoles
+                depuis Sini.
+              </p>
+            </div>
 
             <Link
               to="/parcelles/new"
-              className="font-semibold text-green-700 hover:text-green-800"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2"
             >
-              Ajouter ma première parcelle →
+              <span className="text-lg leading-none">+</span>
+              <span>Ajouter une parcelle</span>
             </Link>
           </div>
-        ) : (
-          /* Liste des parcelles */
-          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-            {parcelles.map((parcelle) => (
-              <article
-                key={parcelle.id}
-                className="rounded-2xl bg-white p-4 shadow sm:p-6"
+        </header>
+
+        {/* ==================== STATISTIQUES ==================== */}
+
+        <section className="mb-8">
+          <div className="grid gap-4 sm:grid-cols-3">
+
+            {/* Nombre de parcelles */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-start justify-between">
+                <Icon className="bg-green-50 text-green-700">
+                  🌱
+                </Icon>
+
+                <span className="text-sm text-slate-300">
+                  →
+                </span>
+              </div>
+
+              <p className="mt-5 text-sm font-medium text-slate-500">
+                Total des parcelles
+              </p>
+
+              <p className="mt-1 text-3xl font-bold text-slate-950">
+                {parcelles.length}
+              </p>
+            </div>
+
+            {/* Cultures */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-start justify-between">
+                <Icon className="bg-blue-50 text-blue-700">
+                  ☘️
+                </Icon>
+
+                <span className="text-sm text-slate-300">
+                  →
+                </span>
+              </div>
+
+              <p className="mt-5 text-sm font-medium text-slate-500">
+                Cultures enregistrées
+              </p>
+
+              <p className="mt-1 text-3xl font-bold text-slate-950">
+                {new Set(parcelles.map((parcelle) => parcelle.culture)).size}
+              </p>
+            </div>
+
+            {/* Superficie */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-start justify-between">
+                <Icon className="bg-amber-50 text-amber-700">
+                  ◫
+                </Icon>
+
+                <span className="text-sm text-slate-300">
+                  →
+                </span>
+              </div>
+
+              <p className="mt-5 text-sm font-medium text-slate-500">
+                Superficie totale
+              </p>
+
+              <p className="mt-1 text-3xl font-bold text-slate-950">
+                {parcelles
+                  .reduce(
+                    (total, parcelle) =>
+                      total + Number(parcelle.superficie_ha || 0),
+                    0,
+                  )
+                  .toFixed(1)}{" "}
+                <span className="text-lg font-semibold text-slate-500">
+                  ha
+                </span>
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ==================== LISTE ==================== */}
+
+        <section>
+          <div className="mb-5 flex items-end justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-slate-950">
+                Vos parcelles
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Informations et conditions actuelles
+              </p>
+            </div>
+
+            {parcelles.length > 0 && (
+              <span className="hidden rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 shadow-sm ring-1 ring-slate-200 sm:inline-block">
+                {parcelles.length}{" "}
+                {parcelles.length > 1 ? "parcelles" : "parcelle"}
+              </span>
+            )}
+          </div>
+
+          {/* ==================== AUCUNE PARCELLE ==================== */}
+
+          {parcelles.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-3xl">
+                🌱
+              </div>
+
+              <h3 className="mt-5 text-lg font-bold text-slate-950">
+                Aucune parcelle enregistrée
+              </h3>
+
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+                Commencez par ajouter votre première parcelle pour
+                suivre vos cultures et vos activités agricoles.
+              </p>
+
+              <Link
+                to="/parcelles/new"
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h2 className="break-words text-xl font-bold text-green-800">
-                      {parcelle.name}
-                    </h2>
+                Ajouter ma première parcelle
+              </Link>
+            </div>
+          ) : (
+            /* ==================== CARTES ==================== */
 
-                    <p className="mt-1 text-sm text-gray-500">
-                      {parcelle.culture}
-                    </p>
+            <div className="grid gap-5 lg:grid-cols-2">
+              {parcelles.map((parcelle) => (
+                <article
+                  key={parcelle.id}
+                  className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  {/* En-tête de carte */}
+
+                  <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-4">
+                        <Icon className="shrink-0 bg-green-50 text-xl">
+                          🌱
+                        </Icon>
+
+                        <div className="min-w-0">
+                          <h3 className="break-words text-xl font-bold text-slate-950">
+                            {parcelle.name}
+                          </h3>
+
+                          <p className="mt-1 text-sm font-medium text-green-700">
+                            {parcelle.culture}
+                          </p>
+                        </div>
+                      </div>
+
+                      <span className="shrink-0 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                        Active
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-4 rounded-xl bg-gray-50 p-4">
-                  <div className="grid gap-3 text-sm sm:grid-cols-2">
-                    <div>
-                      <p className="text-gray-500">
-                        Culture
-                      </p>
+                  {/* Informations */}
 
-                      <p className="mt-1 font-semibold text-gray-800">
-                        {parcelle.culture}
-                      </p>
-                    </div>
+                  <div className="px-5 py-5 sm:px-6">
+                    <div className="grid grid-cols-2 gap-3">
 
-                    <div>
-                      <p className="text-gray-500">
-                        Superficie
-                      </p>
-
-                      <p className="mt-1 font-semibold text-gray-800">
-                        {parcelle.superficie_ha} ha
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-gray-500">
-                        Région
-                      </p>
-
-                      <p className="mt-1 font-semibold text-gray-800">
-                        {parcelle.region}
-                      </p>
-                    </div>
-
-                    {parcelle.commune && (
-                      <div>
-                        <p className="text-gray-500">
-                          Commune
+                      <div className="rounded-2xl bg-slate-50 p-4">
+                        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                          Culture
                         </p>
 
-                        <p className="mt-1 font-semibold text-gray-800">
-                          {parcelle.commune}
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {parcelle.culture}
                         </p>
                       </div>
-                    )}
+
+                      <div className="rounded-2xl bg-slate-50 p-4">
+                        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                          Superficie
+                        </p>
+
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {parcelle.superficie_ha} ha
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl bg-slate-50 p-4">
+                        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                          Région
+                        </p>
+
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {parcelle.region}
+                        </p>
+                      </div>
+
+                      {parcelle.commune ? (
+                        <div className="rounded-2xl bg-slate-50 p-4">
+                          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                            Commune
+                          </p>
+
+                          <p className="mt-1 break-words text-sm font-semibold text-slate-900">
+                            {parcelle.commune}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="rounded-2xl bg-slate-50 p-4">
+                          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                            Localisation
+                          </p>
+
+                          <p className="mt-1 text-sm font-semibold text-slate-400">
+                            Non renseignée
+                          </p>
+                        </div>
+                      )}
+
+                    </div>
+
+                    {/* Météo */}
+
+                    <ParcelleWeather
+                      region={parcelle.region}
+                    />
                   </div>
-                </div>
 
-                {/* Météo de la région */}
-                <ParcelleWeather
-                  region={parcelle.region}
-                />
+                  {/* Actions */}
 
-                {/* Actions */}
-                <div className="mt-6 grid gap-2 sm:grid-cols-3">
-                  <Link
-                    to={`/parcelles/${parcelle.id}/journal`}
-                    className="rounded-lg bg-green-600 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-green-700"
-                  >
-                    Journal
-                  </Link>
+                  <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6">
+                    <div className="grid gap-2 sm:grid-cols-3">
 
-                  <Link
-                    to={`/parcelles/${parcelle.id}/edit`}
-                    className="rounded-lg bg-blue-600 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700"
-                  >
-                    Modifier
-                  </Link>
+                      <Link
+                        to={`/parcelles/${parcelle.id}/journal`}
+                        className="inline-flex items-center justify-center rounded-xl bg-green-700 px-3 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
+                      >
+                        Journal
+                      </Link>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(parcelle)}
-                    className="rounded-lg bg-red-600 px-3 py-3 text-sm font-semibold text-white hover:bg-red-700"
-                  >
-                    Supprimer
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+                      <Link
+                        to={`/parcelles/${parcelle.id}/edit`}
+                        className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      >
+                        Modifier
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(parcelle)}
+                        className="inline-flex items-center justify-center rounded-xl border border-red-100 bg-white px-3 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                      >
+                        Supprimer
+                      </button>
+
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );
