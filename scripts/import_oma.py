@@ -63,11 +63,7 @@ def main() -> None:
 
             total += len(prices)
 
-            print(
-                f"{path.name} : "
-                f"{len(prices)} prix importés "
-                f"pour le {date_releve}."
-            )
+            print(f"{path.name} : {len(prices)} prix importés pour le {date_releve}.")
 
         session.commit()
 

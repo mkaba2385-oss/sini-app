@@ -125,3 +125,13 @@ class PrixResponse(PrixBase):
     updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class PrixPredictionResponse(BaseModel):
+    """Réponse contenant une prédiction de prix agricole."""
+
+    culture: CultureType
+    marche: str
+    date_prediction: date
+    prix_predit: float
+    unite: UnitePrix

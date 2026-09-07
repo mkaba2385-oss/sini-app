@@ -1,10 +1,16 @@
+from datetime import date
 from typing import Any, Generic, Protocol, TypeVar, cast
 
 from typing_extensions import Self
 
-from sini.repositories.base import RepositoryInterface, UserRepositoryInterface
+from sini.repositories.base import (
+    PrixRepositoryInterface,
+    RepositoryInterface,
+    UserRepositoryInterface,
+)
 from sini.schemas.journal import JournalEntryResponse
-from sini.schemas.parcelle import ParcelleResponse
+from sini.schemas.parcelle import CultureType, ParcelleResponse
+from sini.schemas.prix import PrixResponse, UnitePrix
 from sini.schemas.user import UserResponse
 
 
@@ -89,3 +95,58 @@ class InMemoryUserRepository(
 
 class InMemoryJournalRepository(InMemoryRepository[JournalEntryResponse]):
     """Repository en mémoire dédié aux entrées du journal."""
+
+
+class InMemoryPrixRepository(
+    InMemoryRepository[PrixResponse],
+    PrixRepositoryInterface,
+):
+    """Repository en mémoire dédié aux relevés de prix."""
+
+    def list_by_culture(
+        self,
+        culture: CultureType,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour une culture."""
+
+        return [price for price in self._storage.values() if price.culture == culture]
+
+    def list_by_marche(
+        self,
+        marche: str,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour un marché."""
+
+        return [price for price in self._storage.values() if price.marche == marche]
+
+    def list_by_culture_and_marche(
+        self,
+        culture: CultureType,
+        marche: str,
+        unite: UnitePrix,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour une culture, un marché et une unité."""
+
+        return [
+            price
+            for price in self._storage.values()
+            if price.culture == culture
+            and price.marche == marche
+            and price.unite == unite
+        ]
+
+    def delete_by_source_and_date(
+        self,
+        source: str,
+        date_releve: date,
+    ) -> None:
+        """Supprime les relevés d'une source à une date donnée."""
+
+        ids_to_delete = [
+            price.id
+            for price in self._storage.values()
+            if price.source == source and price.date_releve == date_releve
+        ]
+
+        for price_id in ids_to_delete:
+            self._storage.pop(price_id, None)

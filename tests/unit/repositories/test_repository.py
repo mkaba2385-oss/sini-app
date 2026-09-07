@@ -1,9 +1,13 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 
-from sini.repositories.memory import InMemoryParcelleRepository
+from sini.repositories.memory import (
+    InMemoryParcelleRepository,
+    InMemoryPrixRepository,
+)
 from sini.schemas.parcelle import CultureType, ParcelleResponse
+from sini.schemas.prix import PrixResponse, UnitePrix
 from sini.schemas.user import RegionMali
 
 
@@ -27,6 +31,60 @@ def sample_parcelle() -> ParcelleResponse:
         created_at=datetime.now(timezone.utc),
         updated_at=None,
     )
+
+
+@pytest.fixture
+def prix_repo() -> InMemoryPrixRepository:
+    """Fixture qui fournit un repository de prix propre."""
+    return InMemoryPrixRepository()
+
+
+@pytest.fixture
+def sample_prices() -> list[PrixResponse]:
+    """Fixture fournissant plusieurs relevés de prix."""
+    now = datetime.now(timezone.utc)
+
+    return [
+        PrixResponse(
+            id=1,
+            culture=CultureType.MAIS,
+            variete="Gambiaka",
+            type_prix="detaillant",
+            marche="Marché de Ségou",
+            prix_moyen=250.0,
+            unite=UnitePrix.KG,
+            date_releve=date(2026, 1, 1),
+            source="OMA",
+            created_at=now,
+            updated_at=None,
+        ),
+        PrixResponse(
+            id=2,
+            culture=CultureType.MAIS,
+            variete="Gambiaka",
+            type_prix="detaillant",
+            marche="Marché de Bamako",
+            prix_moyen=300.0,
+            unite=UnitePrix.KG,
+            date_releve=date(2026, 1, 8),
+            source="OMA",
+            created_at=now,
+            updated_at=None,
+        ),
+        PrixResponse(
+            id=3,
+            culture=CultureType.RIZ,
+            variete=None,
+            type_prix="detaillant",
+            marche="Marché de Ségou",
+            prix_moyen=400.0,
+            unite=UnitePrix.KG,
+            date_releve=date(2026, 1, 15),
+            source="OMA",
+            created_at=now,
+            updated_at=None,
+        ),
+    ]
 
 
 def test_add_and_get_by_id(
@@ -82,3 +140,71 @@ def test_clear(
 
     assert len(repo.get_all()) == 0
     assert repo.get_next_id() == 1
+
+
+def test_list_by_culture(
+    prix_repo: InMemoryPrixRepository,
+    sample_prices: list[PrixResponse],
+) -> None:
+    """Retourne uniquement les prix de la culture demandée."""
+
+    for price in sample_prices:
+        prix_repo.add(price)
+
+    results = prix_repo.list_by_culture(CultureType.MAIS)
+
+    assert len(results) == 2
+    assert all(price.culture == CultureType.MAIS for price in results)
+
+
+def test_list_by_marche(
+    prix_repo: InMemoryPrixRepository,
+    sample_prices: list[PrixResponse],
+) -> None:
+    """Retourne uniquement les prix du marché demandé."""
+
+    for price in sample_prices:
+        prix_repo.add(price)
+
+    results = prix_repo.list_by_marche("Marché de Ségou")
+
+    assert len(results) == 2
+    assert all(price.marche == "Marché de Ségou" for price in results)
+
+
+def test_list_by_culture_and_marche(
+    prix_repo: InMemoryPrixRepository,
+    sample_prices: list[PrixResponse],
+) -> None:
+    """Retourne uniquement la série culture + marché + unité demandée."""
+
+    for price in sample_prices:
+        prix_repo.add(price)
+
+    results = prix_repo.list_by_culture_and_marche(
+        CultureType.MAIS,
+        "Marché de Ségou",
+        UnitePrix.KG,
+    )
+
+    assert len(results) == 1
+    assert results[0].id == 1
+
+
+def test_delete_by_source_and_date(
+    prix_repo: InMemoryPrixRepository,
+    sample_prices: list[PrixResponse],
+) -> None:
+    """Supprime uniquement les relevés correspondant à la source et la date."""
+
+    for price in sample_prices:
+        prix_repo.add(price)
+
+    prix_repo.delete_by_source_and_date(
+        source="OMA",
+        date_releve=date(2026, 1, 8),
+    )
+
+    assert prix_repo.get_by_id(2) is None
+    assert prix_repo.get_by_id(1) is not None
+    assert prix_repo.get_by_id(3) is not None

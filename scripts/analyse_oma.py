@@ -6,7 +6,6 @@ import pandas as pd
 from sini.parsers.oma import OmaPriceParser
 from sini.scrapers.oma import OmaScraper
 
-
 PDF_PATH = Path("data/oma/communique_du_04_au_10_novembre_2021.pdf")
 
 
@@ -91,9 +90,7 @@ def main() -> None:
         "marche",
     ]
 
-    doublons_metier = df[
-        df.duplicated(subset=colonnes_uniques, keep=False)
-    ]
+    doublons_metier = df[df.duplicated(subset=colonnes_uniques, keep=False)]
 
     print("Nombre de lignes concernées :", len(doublons_metier))
     print(doublons_metier)
@@ -121,7 +118,6 @@ def main() -> None:
 
     print(analyse_culture)
 
-
     print()
     print("=== PRIX PAR MARCHÉ ===")
 
@@ -132,7 +128,6 @@ def main() -> None:
     )
 
     print(analyse_marche)
-
 
     print()
     print("=== VALEURS ABERRANTES PAR CULTURE ET VARIÉTÉ ===")
@@ -165,8 +160,7 @@ def main() -> None:
     ) / df_analyse["ecart_type"]
 
     valeurs_aberrantes = df_analyse[
-        (df_analyse["count"] >= 3)
-        & (df_analyse["z_score"].abs() > 2)
+        (df_analyse["count"] >= 3) & (df_analyse["z_score"].abs() > 2)
     ]
 
     print(
@@ -184,14 +178,10 @@ def main() -> None:
         ]
     )
 
-
     print()
     print("=== PRIX DU MAÏS PILÉ ===")
 
-    mais_pile = df[
-        (df["culture"] == "Maïs")
-        & (df["variete"] == "Pilé")
-    ][
+    mais_pile = df[(df["culture"] == "Maïs") & (df["variete"] == "Pilé")][
         [
             "date_releve",
             "type_prix",
@@ -201,8 +191,6 @@ def main() -> None:
     ].sort_values("prix_kg")
 
     print(mais_pile.to_string(index=False))
-
-
 
 
 if __name__ == "__main__":

@@ -1,11 +1,13 @@
 from datetime import date, datetime, timezone
 
+from sini.ml.price_prediction import PricePredictionModel
 from sini.repositories.base import PrixRepositoryInterface
 from sini.schemas.parcelle import CultureType
 from sini.schemas.prix import (
     PrixCreate,
     PrixResponse,
     PrixUpdate,
+    UnitePrix,
 )
 from sini.services.exceptions import EntityNotFoundError
 
@@ -16,8 +18,10 @@ class PrixService:
     def __init__(
         self,
         repository: PrixRepositoryInterface,
+        prediction_model: PricePredictionModel | None = None,
     ) -> None:
         self.repo = repository
+        self.prediction_model = prediction_model or PricePredictionModel()
 
     def create(self, data: PrixCreate) -> PrixResponse:
         """Crée un nouveau relevé de prix."""
@@ -61,6 +65,39 @@ class PrixService:
         """Retourne les relevés de prix pour un marché."""
 
         return self.repo.list_by_marche(marche)
+
+    def list_by_culture_and_marche(
+        self,
+        culture: CultureType,
+        marche: str,
+        unite: UnitePrix,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour une culture, un marché et une unité."""
+
+        return self.repo.list_by_culture_and_marche(
+            culture=culture,
+            marche=marche,
+            unite=unite,
+        )
+
+    def predict_price(
+        self,
+        culture: CultureType,
+        marche: str,
+        target_date: date,
+    ) -> float:
+        """Prédit le prix d'une culture sur un marché pour une date donnée."""
+
+        prices = self.list_by_culture_and_marche(
+            culture=culture,
+            marche=marche,
+            unite=UnitePrix.KG,
+        )
+
+        return self.prediction_model.predict(
+            prices=prices,
+            target_date=target_date,
+        )
 
     def update(
         self,

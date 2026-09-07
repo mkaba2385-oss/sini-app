@@ -5,13 +5,14 @@ Revises: 7a2d1f5c9b31
 Create Date: 2026-09-04 15:04:55.615959
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = '3b8567178d9d'
-down_revision: Union[str, Sequence[str], None] = '7a2d1f5c9b31'
+revision: str = "3b8567178d9d"
+down_revision: Union[str, Sequence[str], None] = "7a2d1f5c9b31"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

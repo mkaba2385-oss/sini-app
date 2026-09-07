@@ -3,7 +3,7 @@ from datetime import date
 from typing import Generic, TypeVar
 
 from sini.schemas.parcelle import CultureType
-from sini.schemas.prix import PrixResponse
+from sini.schemas.prix import PrixResponse, UnitePrix
 from sini.schemas.user import UserResponse
 
 T = TypeVar("T")
@@ -65,6 +65,16 @@ class PrixRepositoryInterface(RepositoryInterface[PrixResponse]):
         marche: str,
     ) -> list[PrixResponse]:
         """Retourne les relevés pour un marché."""
+        pass
+
+    @abstractmethod
+    def list_by_culture_and_marche(
+        self,
+        culture: CultureType,
+        marche: str,
+        unite: UnitePrix,
+    ) -> list[PrixResponse]:
+        """Retourne les relevés pour une culture, un marché et une unité."""
         pass
 
     @abstractmethod

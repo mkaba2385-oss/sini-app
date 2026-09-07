@@ -25,7 +25,7 @@ from sini.schemas.harvest import HarvestResponse
 from sini.schemas.journal import JournalEntryResponse
 from sini.schemas.parcelle import CultureType, ParcelleResponse
 from sini.schemas.photo import PhotoResponse
-from sini.schemas.prix import PrixResponse
+from sini.schemas.prix import PrixResponse, UnitePrix
 from sini.schemas.season import SeasonResponse
 from sini.schemas.user import UserResponse
 
@@ -52,12 +52,14 @@ class SqlAlchemyParcelleRepository(RepositoryInterface[ParcelleResponse]):
     def add(self, entity: ParcelleResponse) -> ParcelleResponse:
         model = self.session.get(ParcelleModel, entity.id)
         data = _values(entity)
+
         if model is None:
             model = ParcelleModel(**data)
             self.session.add(model)
         else:
             for key, value in data.items():
                 setattr(model, key, value)
+
         self.session.flush()
         return ParcelleResponse.model_validate(model)
 
@@ -94,12 +96,14 @@ class SqlAlchemyUserRepository(UserRepositoryInterface):
     def add(self, entity: UserResponse) -> UserResponse:
         model = self.session.get(UserModel, entity.id)
         data = _values(entity)
+
         if model is None:
             model = UserModel(**data)
             self.session.add(model)
         else:
             for key, value in data.items():
                 setattr(model, key, value)
+
         self.session.flush()
         return UserResponse.model_validate(model)
 
@@ -141,12 +145,14 @@ class SqlAlchemyJournalRepository(RepositoryInterface[JournalEntryResponse]):
     def add(self, entity: JournalEntryResponse) -> JournalEntryResponse:
         model = self.session.get(JournalEntryModel, entity.id)
         data = _values(entity)
+
         if model is None:
             model = JournalEntryModel(**data)
             self.session.add(model)
         else:
             for key, value in data.items():
                 setattr(model, key, value)
+
         self.session.flush()
         return JournalEntryResponse.model_validate(model)
 
@@ -315,7 +321,6 @@ class SqlAlchemyPrixRepository(PrixRepositoryInterface):
             self.session.delete(model)
             self.session.flush()
 
-
     def delete_by_source_and_date(
         self,
         source: str,
@@ -374,14 +379,16 @@ class SqlAlchemyPrixRepository(PrixRepositoryInterface):
         self,
         culture: CultureType,
         marche: str,
+        unite: UnitePrix,
     ) -> list[PrixResponse]:
-        """Récupère les prix d'une culture sur un marché."""
+        """Récupère les prix d'une culture, d'un marché et d'une unité."""
 
         stmt = (
             select(PrixModel)
             .where(
                 PrixModel.culture == culture,
                 PrixModel.marche == marche,
+                PrixModel.unite == unite,
             )
             .order_by(
                 PrixModel.date_releve,

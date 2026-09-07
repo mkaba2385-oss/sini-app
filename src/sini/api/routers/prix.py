@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -7,7 +8,13 @@ from sini.api.dependencies import CurrentAdminDep, CurrentUserDep
 from sini.db.session import get_session
 from sini.repositories.sqlalchemy import SqlAlchemyPrixRepository
 from sini.schemas.parcelle import CultureType
-from sini.schemas.prix import PrixCreate, PrixResponse, PrixUpdate
+from sini.schemas.prix import (
+    PrixCreate,
+    PrixPredictionResponse,
+    PrixResponse,
+    PrixUpdate,
+    UnitePrix,
+)
 from sini.services.exceptions import EntityNotFoundError
 from sini.services.prix_service import PrixService
 
@@ -99,6 +106,36 @@ def get_prix_by_marche(
     """Récupère les relevés de prix pour un marché."""
 
     return service.list_by_marche(marche)
+
+
+@router.get("/prediction", response_model=PrixPredictionResponse)
+def predict_prix(
+    culture: CultureType,
+    marche: str,
+    target_date: date,
+    service: PrixServiceDep,
+    current_user: CurrentUserDep,
+) -> PrixPredictionResponse:
+    """Prédit le prix d'une culture sur un marché."""
+    try:
+        prediction = service.predict_price(
+            culture=culture,
+            marche=marche,
+            target_date=target_date,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+    return PrixPredictionResponse(
+        culture=culture,
+        marche=marche,
+        date_prediction=target_date,
+        prix_predit=prediction,
+        unite=UnitePrix.KG,
+    )
 
 
 @router.get(

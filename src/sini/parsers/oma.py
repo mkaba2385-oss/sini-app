@@ -79,6 +79,8 @@ class OmaPriceParser:
                 prix_moyen=prix_moyen,
                 unite=unite,
                 date_releve=date_releve,
+                type_prix="detaillant",
+                source="OMA",
             )
 
             prices.append(price)
@@ -90,10 +92,8 @@ class OmaPriceParser:
         text: str,
         date_releve: date,
         source: str = "OMA",
-    ) -> list["OmaPriceRecord"]:
+    ) -> list[OmaPriceRecord]:
         """Extrait les prix aux producteurs du Tableau 1 OMA."""
-
-        from sini.parsers.oma_data import OmaPriceRecord
 
         start = text.find("Tableau 1 : Prix aux Producteurs")
         end = text.find("Tableau 2 : Prix Détaillants")
@@ -175,8 +175,7 @@ class OmaPriceParser:
                     )
                 )
 
-        return records    
-
+        return records
 
     def parse_tableau_2(
         self,
@@ -273,7 +272,6 @@ class OmaPriceParser:
 
         return records
 
-
     def parse_tableau_3(
         self,
         text: str,
@@ -320,7 +318,7 @@ class OmaPriceParser:
 
             try:
                 prix = float(
-                    prix_raw.replace(".", "").replace(",", ".")
+                    prix_raw.replace(".", "").replace(",", "."),
                 )
             except ValueError:
                 continue
@@ -341,7 +339,6 @@ class OmaPriceParser:
             )
 
         return records
-
 
     def parse_tableau_4(
         self,
@@ -365,7 +362,6 @@ class OmaPriceParser:
             "Abidjan Adjamé",
             "Dakar Thiaroye",
         ]
-
 
         records: list[OmaPriceRecord] = []
 
