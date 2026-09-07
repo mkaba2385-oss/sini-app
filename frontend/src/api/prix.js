@@ -23,3 +23,15 @@ export async function getPrixByMarche(marche) {
   );
   return response.data;
 }
+
+export async function predictPrix(culture, marche, targetDate) {
+  const response = await api.get("/prix/prediction", {
+    params: {
+      culture,
+      marche,
+      target_date: targetDate,
+    },
+  });
+
+  return response.data;
+}

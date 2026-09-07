@@ -2,12 +2,19 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import PrixEvolutionChart from "../components/PrixEvolutionChart.jsx";
-import { getPrix } from "../api/prix.js";
+import { getPrix, predictPrix } from "../api/prix.js";
 
 function PrixPage() {
   const [cultureFilter, setCultureFilter] = useState("");
   const [marcheFilter, setMarcheFilter] = useState("");
   const [graphCulture, setGraphCulture] = useState("");
+
+  const [predictionCulture, setPredictionCulture] = useState("");
+  const [predictionMarche, setPredictionMarche] = useState("");
+  const [predictionDate, setPredictionDate] = useState("");
+  const [prediction, setPrediction] = useState(null);
+  const [predictionLoading, setPredictionLoading] = useState(false);
+  const [predictionError, setPredictionError] = useState("");
 
   const {
     data: prix = [],
@@ -121,6 +128,55 @@ function PrixPage() {
       ),
     );
   }, [prix]);
+
+  async function handlePrediction() {
+    setPredictionError("");
+    setPrediction(null);
+
+    if (
+      !predictionCulture ||
+      !predictionMarche ||
+      !predictionDate
+    ) {
+      setPredictionError(
+        "Veuillez sélectionner une culture, un marché et une date.",
+      );
+      return;
+    }
+
+    const selectedDate = new Date(
+      `${predictionDate}T00:00:00`,
+    );
+
+    if (Number.isNaN(selectedDate.getTime())) {
+      setPredictionError("La date sélectionnée est invalide.");
+      return;
+    }
+
+    setPredictionLoading(true);
+
+    try {
+      const result = await predictPrix(
+        predictionCulture,
+        predictionMarche,
+        predictionDate,
+      );
+
+      setPrediction(result);
+    } catch (error) {
+      const detail = error?.response?.data?.detail;
+
+      if (typeof detail === "string") {
+        setPredictionError(detail);
+      } else {
+        setPredictionError(
+          "Impossible de calculer la prédiction. Vérifiez la connexion au serveur.",
+        );
+      }
+    } finally {
+      setPredictionLoading(false);
+    }
+  }
 
   function resetFilters() {
     setCultureFilter("");
@@ -338,6 +394,201 @@ function PrixPage() {
               </button>
             </div>
           </div>
+        </section>
+
+        {/* Prévision des prix */}
+        <section className="mb-6 rounded-3xl border border-green-100 bg-white p-5 shadow-lg shadow-green-900/5 sm:mb-8 sm:p-6">
+          <div className="mb-6">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100 text-lg">
+                🔮
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-green-800 sm:text-2xl">
+                  Prévision des prix
+                </h2>
+
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
+                  Estimez le prix futur d&apos;une culture
+                  sur un marché à partir des relevés historiques
+                  disponibles.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label
+                htmlFor="prediction-culture"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Culture
+              </label>
+
+              <select
+                id="prediction-culture"
+                value={predictionCulture}
+                onChange={(event) => {
+                  setPredictionCulture(event.target.value);
+                  setPrediction(null);
+                  setPredictionError("");
+                }}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-700 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+              >
+                <option value="">
+                  Sélectionner une culture
+                </option>
+
+                {cultures.map((culture) => (
+                  <option key={culture} value={culture}>
+                    {culture}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="prediction-marche"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Marché
+              </label>
+
+              <select
+                id="prediction-marche"
+                value={predictionMarche}
+                onChange={(event) => {
+                  setPredictionMarche(event.target.value);
+                  setPrediction(null);
+                  setPredictionError("");
+                }}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-700 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+              >
+                <option value="">
+                  Sélectionner un marché
+                </option>
+
+                {marches.map((marche) => (
+                  <option key={marche} value={marche}>
+                    {marche}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="prediction-date"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Date de prédiction
+              </label>
+
+              <input
+                id="prediction-date"
+                type="date"
+                value={predictionDate}
+                onChange={(event) => {
+                  setPredictionDate(event.target.value);
+                  setPrediction(null);
+                  setPredictionError("");
+                }}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-700 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+              />
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={handlePrediction}
+              disabled={predictionLoading}
+              className="rounded-xl bg-green-700 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {predictionLoading
+                ? "Calcul de la prédiction..."
+                : "Prédire le prix"}
+            </button>
+
+            <p className="text-sm text-gray-500">
+              Prix prédit en FCFA par kilogramme.
+            </p>
+          </div>
+
+          {predictionError && (
+            <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              <p className="font-semibold">
+                Impossible de calculer la prédiction
+              </p>
+
+              <p className="mt-1">
+                {predictionError}
+              </p>
+            </div>
+          )}
+
+          {prediction && (
+            <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-5 sm:p-6">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    Prix prédit
+                  </p>
+
+                  <p className="mt-2 text-3xl font-bold text-green-700 sm:text-4xl">
+                    {Number(
+                      prediction.prix_predit,
+                    ).toLocaleString("fr-FR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    FCFA
+                  </p>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    par {prediction.unite}
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:min-w-72 sm:grid-cols-2">
+                  <div className="rounded-xl bg-white p-3">
+                    <p className="text-xs font-medium text-gray-500">
+                      Culture
+                    </p>
+
+                    <p className="mt-1 font-semibold text-gray-800">
+                      {prediction.culture}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-white p-3">
+                    <p className="text-xs font-medium text-gray-500">
+                      Marché
+                    </p>
+
+                    <p className="mt-1 font-semibold text-gray-800">
+                      {prediction.marche}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-white p-3 sm:col-span-2">
+                    <p className="text-xs font-medium text-gray-500">
+                      Date prévue
+                    </p>
+
+                    <p className="mt-1 font-semibold text-gray-800">
+                      {new Date(
+                        `${prediction.date_prediction}T00:00:00`,
+                      ).toLocaleDateString("fr-FR")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Évolution des prix */}
