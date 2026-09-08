@@ -40,8 +40,10 @@ def test_predict_uses_moving_average() -> None:
     ]
 
     prediction = model.predict(
-        prices,
-        date(2026, 2, 1),
+        prices=prices,
+        culture=CultureType.MAIS,
+        marche="Marché de Ségou",
+        target_date=date(2026, 2, 1),
     )
 
     assert prediction == 266.67
@@ -59,8 +61,10 @@ def test_predict_uses_only_window_size() -> None:
     ]
 
     prediction = model.predict(
-        prices,
-        date(2026, 2, 1),
+        prices=prices,
+        culture=CultureType.MAIS,
+        marche="Marché de Ségou",
+        target_date=date(2026, 2, 1),
     )
 
     assert prediction == 250.0
@@ -79,8 +83,10 @@ def test_predict_applies_seasonality() -> None:
     ]
 
     prediction = model.predict(
-        prices,
-        date(2026, 2, 15),
+        prices=prices,
+        culture=CultureType.MAIS,
+        marche="Marché de Ségou",
+        target_date=date(2026, 2, 15),
     )
 
     assert prediction == 266.67
@@ -97,8 +103,10 @@ def test_predict_without_seasonal_history() -> None:
     ]
 
     prediction = model.predict(
-        prices,
-        date(2026, 3, 1),
+        prices=prices,
+        culture=CultureType.MAIS,
+        marche="Marché de Ségou",
+        target_date=date(2026, 3, 1),
     )
 
     assert prediction == 150.0
@@ -113,7 +121,12 @@ def test_predict_without_historical_data() -> None:
         ValueError,
         match="sans données historiques",
     ):
-        model.predict([], date(2026, 2, 1))
+        model.predict(
+            prices=[],
+            culture=CultureType.MAIS,
+            marche="Marché de Ségou",
+            target_date=date(2026, 2, 1),
+        )
 
 
 def test_model_rejects_invalid_window_size() -> None:

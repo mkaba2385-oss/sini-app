@@ -1,4 +1,5 @@
 from datetime import date, datetime, timezone
+from typing import Protocol
 
 from sini.ml.price_prediction import PricePredictionModel
 from sini.repositories.base import PrixRepositoryInterface
@@ -12,13 +13,27 @@ from sini.schemas.prix import (
 from sini.services.exceptions import EntityNotFoundError
 
 
+class PricePredictionProtocol(Protocol):
+    """Contrat commun pour les modèles de prédiction de prix."""
+
+    def predict(
+        self,
+        prices: list[PrixResponse],
+        culture: CultureType,
+        marche: str,
+        target_date: date,
+    ) -> float:
+        """Prédit un prix."""
+        ...
+
+
 class PrixService:
     """Service métier de gestion des relevés de prix."""
 
     def __init__(
         self,
         repository: PrixRepositoryInterface,
-        prediction_model: PricePredictionModel | None = None,
+        prediction_model: PricePredictionProtocol | None = None,
     ) -> None:
         self.repo = repository
         self.prediction_model = prediction_model or PricePredictionModel()
@@ -88,14 +103,12 @@ class PrixService:
     ) -> float:
         """Prédit le prix d'une culture sur un marché pour une date donnée."""
 
-        prices = self.list_by_culture_and_marche(
-            culture=culture,
-            marche=marche,
-            unite=UnitePrix.KG,
-        )
+        prices = self.get_all()
 
         return self.prediction_model.predict(
             prices=prices,
+            culture=culture,
+            marche=marche,
             target_date=target_date,
         )
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from datetime import date
 
+from sini.schemas.parcelle import CultureType
 from sini.schemas.prix import PrixResponse
 
 
@@ -26,15 +27,25 @@ class PricePredictionModel:
     def predict(
         self,
         prices: Sequence[PrixResponse],
+        culture: CultureType,
+        marche: str,
         target_date: date,
     ) -> float:
-        """Prédit le prix pour une date donnée."""
+        """Prédit le prix pour une culture, un marché et une date donnée."""
 
-        if not prices:
+        filtered_prices = [
+            price
+            for price in prices
+            if price.culture == culture
+            and price.marche == marche
+            and price.date_releve < target_date
+        ]
+
+        if not filtered_prices:
             raise ValueError("Impossible de prédire un prix sans données historiques.")
 
         sorted_prices = sorted(
-            prices,
+            filtered_prices,
             key=lambda price: price.date_releve,
         )
 

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from sini.config import OPENWEATHER_API_KEY
+from sini.ml.random_forest_prediction import RandomForestPricePredictionModel
 from sini.observers.base import EventPublisher
 from sini.observers.sms_observer import SmsNotificationObserver
 from sini.providers.openweather import OpenWeatherMapProvider
@@ -155,4 +156,5 @@ class ServiceFactory:
 
         return PrixService(
             repository=repo,
+            prediction_model=RandomForestPricePredictionModel(),
         )

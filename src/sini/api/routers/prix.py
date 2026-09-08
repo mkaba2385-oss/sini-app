@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from sini.api.dependencies import CurrentAdminDep, CurrentUserDep
 from sini.db.session import get_session
-from sini.repositories.sqlalchemy import SqlAlchemyPrixRepository
+from sini.factories.service_factory import ServiceFactory
 from sini.schemas.parcelle import CultureType
 from sini.schemas.prix import (
     PrixCreate,
@@ -33,11 +33,9 @@ SessionDep = Annotated[
 def get_prix_service(
     session: SessionDep,
 ) -> PrixService:
-    """Crée un PrixService avec le repository PostgreSQL."""
+    """Crée un PrixService avec le modèle Random Forest."""
 
-    repository = SqlAlchemyPrixRepository(session)
-
-    return PrixService(repository)
+    return ServiceFactory.create_prix_service(session)
 
 
 PrixServiceDep = Annotated[
