@@ -1,14 +1,4 @@
-from __future__ import annotations
-
-import sys
-from pathlib import Path
 from statistics import mean
-
-ROOT_DIR = Path(__file__).resolve().parents[1]
-SRC_DIR = ROOT_DIR / "src"
-
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
 
 from sini.db.session import SessionLocal
 from sini.ml.price_prediction import PricePredictionModel
@@ -28,10 +18,13 @@ def mae(actual: list[float], predicted: list[float]) -> float:
 
 def rmse(actual: list[float], predicted: list[float]) -> float:
     """Calcule la RMSE."""
-    return mean(
-        (real - prediction) ** 2
-        for real, prediction in zip(actual, predicted, strict=True)
-    ) ** 0.5
+    return (
+        mean(
+            (real - prediction) ** 2
+            for real, prediction in zip(actual, predicted, strict=True)
+        )
+        ** 0.5
+    )
 
 
 def load_prices() -> list[PrixResponse]:
@@ -50,11 +43,7 @@ def main() -> None:
     prices = load_prices()
 
     # Le modèle travaille sur les prix en FCFA/kg.
-    prices = [
-        price
-        for price in prices
-        if price.unite.value == "kg"
-    ]
+    prices = [price for price in prices if price.unite.value == "kg"]
 
     prices.sort(key=lambda price: price.date_releve)
 
@@ -73,10 +62,7 @@ def main() -> None:
     print(f"Période disponible : {dates[0]} → {dates[-1]}")
     print()
 
-    print(
-        "Attention : les données disponibles ne couvrent pas "
-        "3 mois continus."
-    )
+    print("Attention : les données disponibles ne couvrent pas 3 mois continus.")
     print()
 
     all_actual: list[float] = []
@@ -88,16 +74,10 @@ def main() -> None:
 
     for target_date in dates:
         historical_prices = [
-            price
-            for price in prices
-            if price.date_releve < target_date
+            price for price in prices if price.date_releve < target_date
         ]
 
-        test_prices = [
-            price
-            for price in prices
-            if price.date_releve == target_date
-        ]
+        test_prices = [price for price in prices if price.date_releve == target_date]
 
         print("-" * 70)
         print(f"Date test : {target_date}")
@@ -182,18 +162,9 @@ def main() -> None:
         all_random_forest.extend(date_random_forest)
 
         print(f"Cas testés : {len(date_actual)}")
-        print(
-            f"MAE Baseline       : "
-            f"{mae(date_actual, date_baseline):.2f}"
-        )
-        print(
-            f"MAE Ridge          : "
-            f"{mae(date_actual, date_ridge):.2f}"
-        )
-        print(
-            f"MAE Random Forest  : "
-            f"{mae(date_actual, date_random_forest):.2f}"
-        )
+        print(f"MAE Baseline       : {mae(date_actual, date_baseline):.2f}")
+        print(f"MAE Ridge          : {mae(date_actual, date_ridge):.2f}")
+        print(f"MAE Random Forest  : {mae(date_actual, date_random_forest):.2f}")
 
     if not all_actual:
         print()
@@ -228,32 +199,18 @@ def main() -> None:
     print(f"{'Modèle':<25} {'MAE':>10} {'RMSE':>10}")
     print("-" * 50)
 
-    print(
-        f"{'Baseline':<25} "
-        f"{baseline_mae:>10.2f} "
-        f"{baseline_rmse:>10.2f}"
-    )
+    print(f"{'Baseline':<25} {baseline_mae:>10.2f} {baseline_rmse:>10.2f}")
+
+    print(f"{'Ridge Regression':<25} {ridge_mae:>10.2f} {ridge_rmse:>10.2f}")
 
     print(
-        f"{'Ridge Regression':<25} "
-        f"{ridge_mae:>10.2f} "
-        f"{ridge_rmse:>10.2f}"
-    )
-
-    print(
-        f"{'Random Forest':<25} "
-        f"{random_forest_mae:>10.2f} "
-        f"{random_forest_rmse:>10.2f}"
+        f"{'Random Forest':<25} {random_forest_mae:>10.2f} {random_forest_rmse:>10.2f}"
     )
 
     print()
 
     if baseline_mae > 0:
-        mae_improvement = (
-            (baseline_mae - random_forest_mae)
-            / baseline_mae
-            * 100
-        )
+        mae_improvement = (baseline_mae - random_forest_mae) / baseline_mae * 100
 
         print(
             "Amélioration Random Forest / Baseline : "
@@ -261,11 +218,7 @@ def main() -> None:
         )
 
     if baseline_rmse > 0:
-        rmse_improvement = (
-            (baseline_rmse - random_forest_rmse)
-            / baseline_rmse
-            * 100
-        )
+        rmse_improvement = (baseline_rmse - random_forest_rmse) / baseline_rmse * 100
 
         print(
             "Amélioration Random Forest / Baseline : "
