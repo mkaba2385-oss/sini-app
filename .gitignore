@@ -23,3 +23,6 @@ dist/
 
 # Système
 .DS_Store
+
+data/plantvillage/
+notebooks/.ipynb_checkpoints/
