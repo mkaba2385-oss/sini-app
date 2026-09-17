@@ -13,6 +13,7 @@ import ParcellesPage from "../pages/ParcellesPage.jsx";
 import RegisterPage from "../pages/RegisterPage.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PrixPage from "../pages/PrixPage.jsx";
+import PlantDiagnosisPage from "../pages/PlantDiagnosisPage.jsx";
 
 function AppRouter() {
   return (
@@ -75,6 +76,10 @@ function AppRouter() {
           <Route
             path="/prix"
             element={<PrixPage />}
+          />
+          <Route
+            path="/diagnostic"
+            element={<PlantDiagnosisPage />}
           />
         </Route>
       </Routes>

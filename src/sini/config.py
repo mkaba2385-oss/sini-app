@@ -37,3 +37,10 @@ OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 AFRICASTALKING_USERNAME = os.getenv("AFRICASTALKING_USERNAME")
 
 AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")
+
+# Service ML
+
+ML_SERVICE_URL = os.getenv(
+    "ML_SERVICE_URL",
+    "http://localhost:8001",
+)

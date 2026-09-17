@@ -44,6 +44,10 @@ function Navbar() {
       label: "Prix des marchés",
       path: "/prix",
     },
+    {
+      label: "Diagnostiquer une plante",
+      path: "/diagnostic",
+    },
   ];
 
   return (
@@ -103,7 +107,9 @@ function Navbar() {
                     {user?.full_name || "Utilisateur"}
                   </p>
 
-                  <p className="text-xs text-slate-500">Agriculteur</p>
+                  <p className="text-xs text-slate-500">
+                    Agriculteur
+                  </p>
                 </div>
               </div>
 
@@ -155,7 +161,9 @@ function Navbar() {
                   {user?.full_name || "Utilisateur"}
                 </p>
 
-                <p className="text-sm text-slate-500">Agriculteur</p>
+                <p className="text-sm text-slate-500">
+                  Agriculteur
+                </p>
               </div>
             </div>
 
