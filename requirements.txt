@@ -16,4 +16,5 @@ httpx>=0.27,<1.0
 requests>=2.0
 africastalking
 pypdf
+python-multipart>=0.0.9
 
