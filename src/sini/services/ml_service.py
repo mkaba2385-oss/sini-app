@@ -16,7 +16,7 @@ async def predict_image(
         ),
     }
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=None) as client:
         response = await client.post(
             f"{ML_SERVICE_URL}/predict",
             files=files,
