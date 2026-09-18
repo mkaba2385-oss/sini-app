@@ -7,11 +7,11 @@ from sini.api.routers.harvests import router as harvests_router
 from sini.api.routers.journal import router as journal_router
 from sini.api.routers.parcelles import router as parcelles_router
 from sini.api.routers.photos import router as photos_router
+from sini.api.routers.plant_diagnosis import router as plant_diagnosis_router
 from sini.api.routers.prix import router as prix_router
 from sini.api.routers.seasons import router as seasons_router
 from sini.api.routers.users import router as users_router
 from sini.api.routers.weather import router as weather_router
-from sini.api.routers.plant_diagnosis import router as plant_diagnosis_router
 
 app = FastAPI(
     title="Sini API",
