@@ -84,7 +84,14 @@ function AddJournalEntryPage() {
       navigate(`/parcelles/${parcelleId}/journal`);
     } catch (err) {
       console.error(err);
-      setError("Impossible d'ajouter cette entrée.");
+
+      const detail = err.response?.data?.detail;
+
+      setError(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de l'enregistrement de l'activité.",
+      );
     } finally {
       setLoading(false);
     }

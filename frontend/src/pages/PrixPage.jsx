@@ -170,7 +170,7 @@ function PrixPage() {
         setPredictionError(detail);
       } else {
         setPredictionError(
-          "Impossible de calculer la prédiction. Vérifiez la connexion au serveur.",
+          "Une erreur est survenue lors du calcul de la prédiction.",
         );
       }
     } finally {
@@ -214,7 +214,8 @@ function PrixPage() {
 
               <div>
                 <h1 className="text-lg font-bold">
-                  Impossible de récupérer les prix.
+                  Une erreur est survenue lors du chargement des
+                  prix.
                 </h1>
 
                 <p className="mt-2 text-sm">
@@ -521,7 +522,8 @@ function PrixPage() {
           {predictionError && (
             <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               <p className="font-semibold">
-                Impossible de calculer la prédiction
+                Une erreur est survenue lors du calcul de la
+                prédiction.
               </p>
 
               <p className="mt-1">

@@ -63,7 +63,14 @@ function JournalPage() {
       });
     } catch (error) {
       console.error(error);
-      window.alert("Impossible de supprimer cette activité.");
+
+      const detail = error.response?.data?.detail;
+
+      window.alert(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de la suppression de l'activité.",
+      );
     }
   }
 
@@ -86,7 +93,8 @@ function JournalPage() {
       <main className="min-h-screen bg-green-50 p-4 sm:p-6">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-xl bg-red-100 p-4 text-sm text-red-700 sm:text-base">
-            Impossible de récupérer le journal.
+            Une erreur est survenue lors du chargement du
+            journal.
           </div>
         </div>
       </main>
@@ -143,7 +151,8 @@ function JournalPage() {
             </div>
           ) : statsError ? (
             <div className="rounded-2xl bg-red-100 p-4 text-sm text-red-700 sm:text-base">
-              Impossible de récupérer les statistiques.
+              Une erreur est survenue lors du chargement des
+              statistiques.
             </div>
           ) : stats ? (
             <div className="grid gap-4 sm:grid-cols-2">

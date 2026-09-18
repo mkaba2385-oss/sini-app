@@ -37,9 +37,12 @@ function EditParcellePage() {
       } catch (err) {
         console.error(err);
 
+        const detail = err.response?.data?.detail;
+
         setError(
-          err.response?.data?.detail ||
-            "Impossible de récupérer la parcelle.",
+          typeof detail === "string"
+            ? detail
+            : "Une erreur est survenue lors du chargement de la parcelle.",
         );
       } finally {
         setLoading(false);
@@ -74,9 +77,12 @@ function EditParcellePage() {
     } catch (err) {
       console.error(err);
 
+      const detail = err.response?.data?.detail;
+
       setError(
-        err.response?.data?.detail ||
-          "Impossible de modifier la parcelle.",
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de l'enregistrement des modifications.",
       );
     } finally {
       setSaving(false);

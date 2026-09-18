@@ -62,9 +62,7 @@ function ParcelleWeather({ region }) {
               Conditions météo
             </p>
 
-            <p className="text-xs text-slate-500">
-              {region}
-            </p>
+            <p className="text-xs text-slate-500">{region}</p>
           </div>
         </div>
 
@@ -171,7 +169,14 @@ function ParcellesPage() {
       });
     } catch (error) {
       console.error(error);
-      window.alert("Impossible de supprimer la parcelle.");
+
+      const detail = error.response?.data?.detail;
+
+      window.alert(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de la suppression de la parcelle.",
+      );
     }
   }
 
@@ -205,7 +210,7 @@ function ParcellesPage() {
         <div className="mx-auto max-w-6xl">
           <div className="rounded-3xl border border-red-100 bg-red-50 p-6">
             <p className="font-semibold text-red-800">
-              Impossible de récupérer vos parcelles.
+              Une erreur est survenue lors du chargement de vos parcelles.
             </p>
 
             <p className="mt-1 text-sm text-red-600">
@@ -220,7 +225,6 @@ function ParcellesPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-
         {/* ==================== EN-TÊTE ==================== */}
 
         <header className="mb-8">
@@ -236,8 +240,8 @@ function ParcellesPage() {
               </h1>
 
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
-                Retrouvez et gérez facilement vos parcelles agricoles
-                depuis Sini.
+                Retrouvez et gérez facilement vos parcelles agricoles depuis
+                Sini.
               </p>
             </div>
 
@@ -255,18 +259,13 @@ function ParcellesPage() {
 
         <section className="mb-8">
           <div className="grid gap-4 sm:grid-cols-3">
-
             {/* Nombre de parcelles */}
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between">
-                <Icon className="bg-green-50 text-green-700">
-                  🌱
-                </Icon>
+                <Icon className="bg-green-50 text-green-700">🌱</Icon>
 
-                <span className="text-sm text-slate-300">
-                  →
-                </span>
+                <span className="text-sm text-slate-300">→</span>
               </div>
 
               <p className="mt-5 text-sm font-medium text-slate-500">
@@ -282,13 +281,9 @@ function ParcellesPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between">
-                <Icon className="bg-blue-50 text-blue-700">
-                  ☘️
-                </Icon>
+                <Icon className="bg-blue-50 text-blue-700">☘️</Icon>
 
-                <span className="text-sm text-slate-300">
-                  →
-                </span>
+                <span className="text-sm text-slate-300">→</span>
               </div>
 
               <p className="mt-5 text-sm font-medium text-slate-500">
@@ -304,13 +299,9 @@ function ParcellesPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between">
-                <Icon className="bg-amber-50 text-amber-700">
-                  ◫
-                </Icon>
+                <Icon className="bg-amber-50 text-amber-700">◫</Icon>
 
-                <span className="text-sm text-slate-300">
-                  →
-                </span>
+                <span className="text-sm text-slate-300">→</span>
               </div>
 
               <p className="mt-5 text-sm font-medium text-slate-500">
@@ -330,7 +321,6 @@ function ParcellesPage() {
                 </span>
               </p>
             </div>
-
           </div>
         </section>
 
@@ -369,8 +359,8 @@ function ParcellesPage() {
               </h3>
 
               <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                Commencez par ajouter votre première parcelle pour
-                suivre vos cultures et vos activités agricoles.
+                Commencez par ajouter votre première parcelle pour suivre vos
+                cultures et vos activités agricoles.
               </p>
 
               <Link
@@ -419,7 +409,6 @@ function ParcellesPage() {
 
                   <div className="px-5 py-5 sm:px-6">
                     <div className="grid grid-cols-2 gap-3">
-
                       <div className="rounded-2xl bg-slate-50 p-4">
                         <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                           Culture
@@ -471,21 +460,17 @@ function ParcellesPage() {
                           </p>
                         </div>
                       )}
-
                     </div>
 
                     {/* Météo */}
 
-                    <ParcelleWeather
-                      region={parcelle.region}
-                    />
+                    <ParcelleWeather region={parcelle.region} />
                   </div>
 
                   {/* Actions */}
 
                   <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6">
                     <div className="grid gap-2 sm:grid-cols-3">
-
                       <Link
                         to={`/parcelles/${parcelle.id}/journal`}
                         className="inline-flex items-center justify-center rounded-xl bg-green-700 px-3 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
@@ -507,7 +492,6 @@ function ParcellesPage() {
                       >
                         Supprimer
                       </button>
-
                     </div>
                   </div>
                 </article>

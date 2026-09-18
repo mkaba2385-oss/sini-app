@@ -81,7 +81,10 @@ function RegisterPage() {
           ) {
             fieldErrors[field] =
               "Le mot de passe doit contenir au moins 8 caractères.";
-          } else if (field === "password" && detail.type === "string_too_long") {
+          } else if (
+            field === "password" &&
+            detail.type === "string_too_long"
+          ) {
             fieldErrors[field] = "Le mot de passe est trop long.";
           } else if (field === "region") {
             fieldErrors[field] =
@@ -89,8 +92,7 @@ function RegisterPage() {
           } else if (field === "role") {
             fieldErrors[field] = "Le rôle sélectionné n'est pas valide.";
           } else if (field === "language") {
-            fieldErrors[field] =
-              "La langue sélectionnée n'est pas valide.";
+            fieldErrors[field] = "La langue sélectionnée n'est pas valide.";
           } else {
             fieldErrors[field] =
               "Ce champ contient une valeur invalide.";
@@ -100,7 +102,10 @@ function RegisterPage() {
         setErrors(fieldErrors);
       } else {
         setErrors({
-          general: details || "Impossible de créer le compte.",
+          general:
+            typeof details === "string"
+              ? details
+              : "Une erreur est survenue lors de la création du compte.",
         });
       }
     } finally {
@@ -144,6 +149,7 @@ function RegisterPage() {
               >
                 <div className="flex items-start gap-3">
                   <span className="font-bold">!</span>
+
                   <p className="font-medium">{errors.general}</p>
                 </div>
               </div>

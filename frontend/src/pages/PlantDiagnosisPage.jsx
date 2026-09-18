@@ -58,9 +58,12 @@ function PlantDiagnosisPage() {
 
       setResult(response.data);
     } catch (requestError) {
+      const detail = requestError.response?.data?.detail;
+
       const message =
-        requestError.response?.data?.detail ||
-        "Impossible d'analyser la photo.";
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de l'analyse de la photo.";
 
       setError(message);
     } finally {
@@ -78,17 +81,14 @@ function PlantDiagnosisPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-
         {/* ==================== HERO ==================== */}
 
         <section className="mb-8 overflow-hidden rounded-3xl bg-green-800 shadow-sm">
           <div className="relative px-6 py-8 sm:px-8 lg:px-10 lg:py-10">
-
             <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-green-700 opacity-50" />
             <div className="absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-green-900 opacity-30" />
 
             <div className="relative max-w-3xl">
-
               <div className="mb-4 inline-flex items-center rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-green-50 backdrop-blur">
                 Diagnostic agricole
               </div>
@@ -98,11 +98,9 @@ function PlantDiagnosisPage() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-green-100 sm:text-base">
-                Prenez une photo de votre plante ou importez une
-                image pour identifier une maladie et obtenir une
-                recommandation adaptée.
+                Prenez une photo de votre plante ou importez une image pour
+                identifier une maladie et obtenir une recommandation adaptée.
               </p>
-
             </div>
           </div>
         </section>
@@ -116,18 +114,16 @@ function PlantDiagnosisPage() {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              Prenez une photo avec votre appareil photo ou importez
-              une image depuis votre appareil.
+              Prenez une photo avec votre appareil photo ou importez une image
+              depuis votre appareil.
             </p>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
-
             {/* ==================== ACTIONS ==================== */}
 
             {!preview && (
               <div className="grid gap-4 sm:grid-cols-2">
-
                 {/* Appareil photo */}
 
                 <label
@@ -135,7 +131,6 @@ function PlantDiagnosisPage() {
                   className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-green-300 bg-green-50/50 px-6 py-10 text-center transition-colors hover:border-green-500 hover:bg-green-50"
                 >
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-700">
-
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -150,13 +145,8 @@ function PlantDiagnosisPage() {
                         d="M4 7.5A2.5 2.5 0 0 1 6.5 5h2l1-1.5h5L15.5 5h2A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"
                       />
 
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="3.5"
-                      />
+                      <circle cx="12" cy="12" r="3.5" />
                     </svg>
-
                   </div>
 
                   <p className="mt-4 font-semibold text-slate-900">
@@ -184,7 +174,6 @@ function PlantDiagnosisPage() {
                   className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 px-6 py-10 text-center transition-colors hover:border-green-400 hover:bg-green-50/50"
                 >
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
-
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -199,18 +188,13 @@ function PlantDiagnosisPage() {
                         d="M4 7.5A2.5 2.5 0 0 1 6.5 5h3l1.5-2h4L16.5 5h1A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"
                       />
 
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="3.5"
-                      />
+                      <circle cx="12" cy="12" r="3.5" />
 
                       <path
                         strokeLinecap="round"
                         d="M17 8h.01"
                       />
                     </svg>
-
                   </div>
 
                   <p className="mt-4 font-semibold text-slate-900">
@@ -229,7 +213,6 @@ function PlantDiagnosisPage() {
                     className="sr-only"
                   />
                 </label>
-
               </div>
             )}
 
@@ -237,7 +220,6 @@ function PlantDiagnosisPage() {
 
             {preview && (
               <div>
-
                 <div className="mb-3 flex items-center justify-between gap-4">
                   <p className="text-sm font-semibold text-slate-700">
                     Photo sélectionnée
@@ -259,16 +241,13 @@ function PlantDiagnosisPage() {
                 </div>
 
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-
                   <button
                     type="button"
                     onClick={handlePredict}
                     disabled={loading}
                     className="w-full rounded-xl bg-green-700 px-5 py-3 font-semibold text-white transition-colors hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                   >
-                    {loading
-                      ? "Analyse en cours..."
-                      : "Analyser la plante"}
+                    {loading ? "Analyse en cours..." : "Analyser la plante"}
                   </button>
 
                   <button
@@ -279,9 +258,7 @@ function PlantDiagnosisPage() {
                   >
                     Choisir une autre photo
                   </button>
-
                 </div>
-
               </div>
             )}
 
@@ -290,25 +267,20 @@ function PlantDiagnosisPage() {
             {error && (
               <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
                 <div className="flex gap-3">
-
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 font-bold text-red-600">
                     !
                   </div>
 
                   <div>
                     <p className="font-semibold text-red-800">
-                      Analyse impossible
+                      Une erreur est survenue
                     </p>
 
-                    <p className="mt-1 text-sm text-red-700">
-                      {error}
-                    </p>
+                    <p className="mt-1 text-sm text-red-700">{error}</p>
                   </div>
-
                 </div>
               </div>
             )}
-
           </div>
         </section>
 
@@ -327,12 +299,10 @@ function PlantDiagnosisPage() {
             </div>
 
             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
               {/* Maladie */}
 
               <div className="border-b border-slate-100 p-6 sm:p-7">
                 <div className="flex items-start gap-4">
-
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
                     !
                   </div>
@@ -346,14 +316,12 @@ function PlantDiagnosisPage() {
                       {result.maladie}
                     </p>
                   </div>
-
                 </div>
               </div>
 
               {/* Confiance */}
 
               <div className="border-b border-slate-100 p-6 sm:p-7">
-
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -378,15 +346,12 @@ function PlantDiagnosisPage() {
                     }}
                   />
                 </div>
-
               </div>
 
               {/* Traitement */}
 
               <div className="bg-green-50 p-6 sm:p-7">
-
                 <div className="flex items-start gap-4">
-
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-100 text-green-700">
                     ✓
                   </div>
@@ -400,15 +365,11 @@ function PlantDiagnosisPage() {
                       {result.traitement}
                     </p>
                   </div>
-
                 </div>
-
               </div>
-
             </div>
           </section>
         )}
-
       </div>
     </main>
   );

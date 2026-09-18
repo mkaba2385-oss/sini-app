@@ -42,9 +42,12 @@ function AddParcellePage() {
     } catch (err) {
       console.error(err);
 
+      const detail = err.response?.data?.detail;
+
       setError(
-        err.response?.data?.detail ||
-          "Impossible de créer la parcelle.",
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de l'enregistrement de la parcelle.",
       );
     } finally {
       setLoading(false);

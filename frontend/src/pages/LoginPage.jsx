@@ -26,7 +26,14 @@ function LoginPage() {
       });
     } catch (err) {
       console.error(err);
-      setError("Impossible d'envoyer le code OTP.");
+
+      const detail = err.response?.data?.detail;
+
+      setError(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de l'envoi du code de connexion.",
+      );
     } finally {
       setLoading(false);
     }

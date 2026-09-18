@@ -112,7 +112,13 @@ function EditJournalEntryPage() {
     } catch (err) {
       console.error(err);
 
-      setError("Impossible de modifier cette activité.");
+      const detail = err.response?.data?.detail;
+
+      setError(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de l'enregistrement des modifications.",
+      );
     } finally {
       setSaving(false);
     }
@@ -150,7 +156,8 @@ function EditJournalEntryPage() {
         <div className="mx-auto max-w-2xl">
           <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 sm:p-6 sm:text-base">
             <p className="font-semibold">
-              Impossible de récupérer cette activité.
+              Une erreur est survenue lors du chargement de
+              l'activité.
             </p>
 
             <button
@@ -172,7 +179,7 @@ function EditJournalEntryPage() {
         <div className="mx-auto max-w-2xl">
           <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 sm:p-6 sm:text-base">
             <p className="font-semibold">
-              Activité introuvable.
+              L'activité demandée est introuvable.
             </p>
 
             <button

@@ -289,7 +289,7 @@ function HomePage() {
 
                 <div>
                   <p className="font-semibold text-red-800">
-                    Impossible de récupérer la météo.
+                    Une erreur est survenue lors du chargement des données météo.
                   </p>
 
                   <p className="mt-1 text-sm text-red-700">

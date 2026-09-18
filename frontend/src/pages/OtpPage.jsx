@@ -35,7 +35,14 @@ function OtpPage() {
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError("Code OTP incorrect ou expiré.");
+
+      const detail = err.response?.data?.detail;
+
+      setError(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de la vérification du code.",
+      );
     } finally {
       setLoading(false);
     }
@@ -93,6 +100,7 @@ function OtpPage() {
               >
                 <div className="flex items-start gap-3">
                   <span className="font-bold">!</span>
+
                   <p className="font-medium">{error}</p>
                 </div>
               </div>

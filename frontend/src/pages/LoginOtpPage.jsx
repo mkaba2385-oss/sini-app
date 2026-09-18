@@ -21,7 +21,7 @@ function LoginOtpPage() {
     event.preventDefault();
 
     if (!phoneNumber) {
-      setError("Numéro de téléphone introuvable.");
+      setError("Le numéro de téléphone est introuvable.");
       return;
     }
 
@@ -40,7 +40,14 @@ function LoginOtpPage() {
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError("Code OTP invalide ou expiré.");
+
+      const detail = err.response?.data?.detail;
+
+      setError(
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue lors de la vérification du code.",
+      );
     } finally {
       setLoading(false);
     }
@@ -99,6 +106,7 @@ function LoginOtpPage() {
               >
                 <div className="flex items-start gap-3">
                   <span className="font-bold">!</span>
+
                   <p className="font-medium">{error}</p>
                 </div>
               </div>
