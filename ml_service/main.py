@@ -1,11 +1,12 @@
+# ruff: noqa: B008
+from pathlib import Path
+
 import torch
 import torch.nn as nn
-from fastapi import FastAPI
-from torchvision.models import resnet50
+from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 from torchvision import transforms
-from fastapi import FastAPI, File, UploadFile
-from pathlib import Path
+from torchvision.models import resnet50
 
 MODEL_PATH = Path(__file__).parent / "models" / "resnet50_plantvillage_epoch3.pth"
 

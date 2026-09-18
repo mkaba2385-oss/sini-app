@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 PLANT_DISEASES = {
     "Corn___Cercospora_leaf_spot_Gray_leaf_spot": {
         "maladie": "Tache grise du maïs",
