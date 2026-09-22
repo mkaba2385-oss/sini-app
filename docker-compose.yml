@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: sini-backend
+    env_file:
+      - .env
+    environment:
+      ML_SERVICE_URL: http://ml-service:8001
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ml-service
+
+  ml-service:
+    build:
+      context: .
+      dockerfile: ml_service/Dockerfile
+    container_name: sini-ml
+    ports:
+      - "8001:8001"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000
+    container_name: sini-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
