@@ -1,12 +1,18 @@
 import httpx
+from pydantic import BaseModel
 
 from sini.config import ML_SERVICE_URL
+
+
+class PredictionResponse(BaseModel):
+    classe: str
+    confiance: float
 
 
 async def predict_image(
     image_bytes: bytes,
     filename: str,
-) -> dict:
+) -> PredictionResponse:
     """Envoie une image au service ML et retourne la prédiction."""
 
     files = {
@@ -24,4 +30,4 @@ async def predict_image(
 
     response.raise_for_status()
 
-    return response.json()
+    return PredictionResponse.model_validate(response.json())

@@ -1,0 +1,42 @@
+
+name: Sini CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Tests et qualité du code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install -r requirements.txt
+
+      - name: Vérifier le code avec Ruff
+        run: |
+          ruff check .
+
+      - name: Vérifier les types avec Mypy
+        run: |
+          mypy src
+
+      - name: Lancer les tests
+        run: |
+          pytest

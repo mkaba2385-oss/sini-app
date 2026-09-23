@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, TypedDict
 
 from fastapi import APIRouter, File, UploadFile
 
@@ -12,11 +12,17 @@ router = APIRouter(
 )
 
 
+class PlantDiagnosisResponse(TypedDict):
+    maladie: str
+    confiance: float
+    traitement: str
+
+
 @router.post("/predict")
 async def predict_plant(
     file: Annotated[UploadFile, File(...)],
     current_user: CurrentUserDep,
-) -> dict:
+) -> PlantDiagnosisResponse:
     """Analyse une photo de plante avec le modèle ML."""
 
     image_bytes = await file.read()
@@ -26,8 +32,8 @@ async def predict_plant(
         filename=file.filename or "plant.jpg",
     )
 
-    classe = prediction["classe"]
-    confidence = prediction["confiance"]
+    classe = prediction.classe
+    confidence = prediction.confiance
 
     disease_info = PLANT_DISEASES.get(
         classe,
